@@ -2,7 +2,10 @@ package CodeIt.Ytrip.auth.service;
 
 import CodeIt.Ytrip.auth.dto.KakaoTokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
+import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
+import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
+import CodeIt.Ytrip.common.ResponseStatus;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,7 +37,8 @@ public class AuthService {
     public KakaoLoginResponse kakaoLogin(String code) {
         KakaoUserInfoDto kakaoUserInfo = getAccessToken(code);
 
-        User user = new User(
+        User user = new User();
+        user.createUser(
                 kakaoUserInfo.getNickName(),
                 kakaoUserInfo.getNickName(),
                 kakaoUserInfo.getEmail(),
@@ -116,8 +122,30 @@ public class AuthService {
         log.info("Nickname = {}, email = {}, accessToken = {}, refreshToken = {}", nickname, email, accessToken, refreshToken);
 
         return new KakaoUserInfoDto(nickname, email, accessToken, refreshToken);
-
     }
 
+    public RegisterResponse register(RegisterRequest registerRequest) {
 
+        String username = registerRequest.getUsername();
+        String nickname = registerRequest.getNickname();
+        String email = registerRequest.getEmail();
+        String password = registerRequest.getPassword();
+
+        Optional<User> finduser = userRepository.findByEmail(email);
+        if (finduser.isEmpty()) {
+            User user = new User();
+            // RefeshToken 의 경우 자체 JWT 생성 후 추가 예정
+            user.createUser(
+                    username,
+                    nickname,
+                    email,
+                    password,
+                    null
+            );
+            userRepository.save(user);
+            return new RegisterResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
+        }
+
+        return new RegisterResponse(ResponseStatus.DUPLICATE_EMAIL.getStatus(), ResponseStatus.DUPLICATE_EMAIL.getMessage());
+    }
 }

@@ -17,7 +17,9 @@ public class User {
     private String password;
     private String refreshToken;
 
-    public User(String username, String nickname, String email, String password, String refreshToken) {
+    public User() {}
+
+    public void createUser(String username, String nickname, String email, String password, String refreshToken) {
         this.username = username;
         this.nickname = nickname;
         this.email = email;
