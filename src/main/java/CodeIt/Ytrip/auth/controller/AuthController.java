@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.auth.controller;
 
+import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
 import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
@@ -29,5 +30,10 @@ public class AuthController {
     @PostMapping("/register")
     public RegisterResponse register(@RequestBody RegisterRequest registerRequest) {
         return authService.register(registerRequest);
+    }
+
+    @PostMapping("/login")
+    public Object localLogin(@RequestBody LocalLoginRequest localLoginRequest) {
+        return authService.localLogin(localLoginRequest);
     }
 }

@@ -2,9 +2,12 @@ package CodeIt.Ytrip.auth.service;
 
 import CodeIt.Ytrip.auth.dto.KakaoTokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
+import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
+import CodeIt.Ytrip.auth.dto.response.LocalLoginSuccessResponse;
 import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
+import CodeIt.Ytrip.common.ErrorResponse;
 import CodeIt.Ytrip.common.ResponseStatus;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
@@ -131,8 +134,8 @@ public class AuthService {
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
 
-        Optional<User> finduser = userRepository.findByEmail(email);
-        if (finduser.isEmpty()) {
+        if (!userRepository.existsByEmail(email)) {
+
             User user = new User();
             // RefeshToken 의 경우 자체 JWT 생성 후 추가 예정
             user.createUser(
@@ -147,5 +150,13 @@ public class AuthService {
         }
 
         return new RegisterResponse(ResponseStatus.DUPLICATE_EMAIL.getStatus(), ResponseStatus.DUPLICATE_EMAIL.getMessage());
+    }
+
+    public Object localLogin(LocalLoginRequest localLoginRequest) {
+        if (userRepository.existsByEmailAndPassword(localLoginRequest.getEmail(), localLoginRequest.getPassword())) {
+            return new LocalLoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), "accessToken");
+        } else {
+            return new ErrorResponse(ResponseStatus.NOT_EXIST_USER.getStatus(), ResponseStatus.NOT_EXIST_USER.getMessage());
+        }
     }
 }

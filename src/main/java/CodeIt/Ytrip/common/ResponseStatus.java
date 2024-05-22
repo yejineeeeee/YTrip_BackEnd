@@ -15,7 +15,8 @@ public enum ResponseStatus {
     /**
      * 이메일 중복 2000
      */
-    DUPLICATE_EMAIL(2000, "중복된 이메일 입니다.");
+    DUPLICATE_EMAIL(2000, "중복된 이메일 입니다."),
+    NOT_EXIST_USER(2001, "존재하지 않는 유저입니다.");
 
     private final Integer status;
     private final String message;
