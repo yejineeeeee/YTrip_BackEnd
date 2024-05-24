@@ -4,13 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class User {
 
     @Id @GeneratedValue
     @Column(name = "user_id")
-    private int id;
+    private Long id;
     private String username;
     private String nickname;
     private String email;
@@ -24,6 +26,10 @@ public class User {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 }

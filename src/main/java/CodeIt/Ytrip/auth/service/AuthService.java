@@ -5,9 +5,10 @@ import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
-import CodeIt.Ytrip.auth.dto.response.LocalLoginSuccessResponse;
+import CodeIt.Ytrip.auth.dto.response.LoginSuccessResponse;
 import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
 import CodeIt.Ytrip.common.ErrorResponse;
+import CodeIt.Ytrip.common.JwtUtils;
 import CodeIt.Ytrip.common.ResponseStatus;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,6 +37,7 @@ public class AuthService {
     private String redirectUri;
     @Value("${KAKAO.REST.API.KEY}")
     private String restAPiKey;
+    private final JwtUtils jwtUtils;
 
     private final UserRepository userRepository;
 
@@ -153,10 +157,30 @@ public class AuthService {
     }
 
     public Object localLogin(LocalLoginRequest localLoginRequest) {
-        if (userRepository.existsByEmailAndPassword(localLoginRequest.getEmail(), localLoginRequest.getPassword())) {
-            return new LocalLoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), "accessToken");
+        Optional<User> findUser = userRepository.findByEmailAndPassword(localLoginRequest.getEmail(), localLoginRequest.getPassword());
+        if (findUser.isPresent()) {
+            String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
+            String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
+            findUser.get().updateRefreshToken(refreshToken);
+            userRepository.save(findUser.get());
+            return new LoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), accessToken, refreshToken);
         } else {
             return new ErrorResponse(ResponseStatus.NOT_EXIST_USER.getStatus(), ResponseStatus.NOT_EXIST_USER.getMessage());
         }
+    }
+
+    public Object reissue(String token) {
+        if (jwtUtils.isValidToken(token)) {
+            Optional<User> findUser = userRepository.findByRefreshToken(token);
+            if (findUser.isPresent()) {
+                String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
+                String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
+                findUser.get().updateRefreshToken(refreshToken);
+                return new LoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), accessToken, refreshToken);
+            } else {
+                return new ErrorResponse(ResponseStatus.NOT_EXIST_USER.getStatus(), ResponseStatus.NOT_EXIST_USER.getMessage());
+            }
+        }
+        return new ErrorResponse(ResponseStatus.LOGIN_REQUIRED.getStatus(), ResponseStatus.LOGIN_REQUIRED.getMessage());
     }
 }

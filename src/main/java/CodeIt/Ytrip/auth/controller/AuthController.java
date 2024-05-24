@@ -7,10 +7,7 @@ import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
 import CodeIt.Ytrip.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -35,5 +32,11 @@ public class AuthController {
     @PostMapping("/login")
     public Object localLogin(@RequestBody LocalLoginRequest localLoginRequest) {
         return authService.localLogin(localLoginRequest);
+    }
+
+    @PatchMapping("/reissue")
+    public Object reissue(@RequestBody Map<String, String> body) {
+        String refreshToken = body.get("refresh_token");
+        return authService.reissue(refreshToken);
     }
 }

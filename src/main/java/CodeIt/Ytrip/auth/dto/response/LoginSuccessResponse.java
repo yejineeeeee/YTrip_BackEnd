@@ -5,9 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LocalLoginSuccessResponse {
+public class LoginSuccessResponse {
 
-    private Integer status;
+    private String status;
     private String message;
     private String accessToken;
+    private String refreshToken;
 }
