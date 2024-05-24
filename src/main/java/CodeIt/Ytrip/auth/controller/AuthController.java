@@ -3,8 +3,9 @@ package CodeIt.Ytrip.auth.controller;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
-import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
+import CodeIt.Ytrip.auth.dto.response.SuccessResponse;
 import CodeIt.Ytrip.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public RegisterResponse register(@RequestBody RegisterRequest registerRequest) {
+    public SuccessResponse register(@RequestBody RegisterRequest registerRequest) {
         return authService.register(registerRequest);
+    }
+
+    @PostMapping("/duplicate/email")
+    public Object checkEmailDuplicate(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        log.info("email = {}", email);
+        return authService.checkEmailDuplicate(email);
     }
 
     @PostMapping("/login")

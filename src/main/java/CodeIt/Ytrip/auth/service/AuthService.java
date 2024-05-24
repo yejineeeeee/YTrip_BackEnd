@@ -6,7 +6,7 @@ import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
 import CodeIt.Ytrip.auth.dto.response.LoginSuccessResponse;
-import CodeIt.Ytrip.auth.dto.response.RegisterResponse;
+import CodeIt.Ytrip.auth.dto.response.SuccessResponse;
 import CodeIt.Ytrip.common.ErrorResponse;
 import CodeIt.Ytrip.common.JwtUtils;
 import CodeIt.Ytrip.common.ResponseStatus;
@@ -131,29 +131,23 @@ public class AuthService {
         return new KakaoUserInfoDto(nickname, email, accessToken, refreshToken);
     }
 
-    public RegisterResponse register(RegisterRequest registerRequest) {
+    public SuccessResponse register(RegisterRequest registerRequest) {
 
         String username = registerRequest.getUsername();
         String nickname = registerRequest.getNickname();
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
+        User user = new User();
+        user.createUser(username,nickname,email,password,null);
+        userRepository.save(user);
+        return new SuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
+    }
 
+    public Object checkEmailDuplicate(String email) {
         if (!userRepository.existsByEmail(email)) {
-
-            User user = new User();
-            // RefeshToken 의 경우 자체 JWT 생성 후 추가 예정
-            user.createUser(
-                    username,
-                    nickname,
-                    email,
-                    password,
-                    null
-            );
-            userRepository.save(user);
-            return new RegisterResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
+            return new SuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
         }
-
-        return new RegisterResponse(ResponseStatus.DUPLICATE_EMAIL.getStatus(), ResponseStatus.DUPLICATE_EMAIL.getMessage());
+        return new ErrorResponse(ResponseStatus.DUPLICATE_EMAIL.getStatus(), ResponseStatus.DUPLICATE_EMAIL.getMessage());
     }
 
     public Object localLogin(LocalLoginRequest localLoginRequest) {
