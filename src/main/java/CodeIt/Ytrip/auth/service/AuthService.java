@@ -1,15 +1,13 @@
 package CodeIt.Ytrip.auth.service;
 
-import CodeIt.Ytrip.auth.dto.KakaoTokenDto;
+import CodeIt.Ytrip.auth.dto.TokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
-import CodeIt.Ytrip.auth.dto.response.KakaoLoginResponse;
-import CodeIt.Ytrip.auth.dto.response.LoginSuccessResponse;
-import CodeIt.Ytrip.auth.dto.response.SuccessResponse;
-import CodeIt.Ytrip.common.ErrorResponse;
+import CodeIt.Ytrip.common.exception.StatusCode;
+import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.JwtUtils;
-import CodeIt.Ytrip.common.ResponseStatus;
+import CodeIt.Ytrip.common.reponse.SuccessResponse;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +39,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public KakaoLoginResponse kakaoLogin(String code) {
+    public ResponseEntity<?> kakaoLogin(String code) {
         KakaoUserInfoDto kakaoUserInfo = getAccessToken(code);
 
         User user = new User();
@@ -54,7 +52,7 @@ public class AuthService {
         );
 
         userRepository.save(user);
-        return new KakaoLoginResponse(1000, kakaoUserInfo.getAccessToken());
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), kakaoUserInfo));
     }
 
     private KakaoUserInfoDto getAccessToken(String code) {
@@ -85,11 +83,11 @@ public class AuthService {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(kakaoToken.getBody());
 
-            KakaoTokenDto kakaoTokenDto = new KakaoTokenDto(
+            TokenDto tokenDto = new TokenDto(
                     (String) jsonObject.get("access_token"),
                     (String) jsonObject.get("refresh_token"));
 
-            return getKakaoUserInfo(kakaoTokenDto);
+            return getKakaoUserInfo(tokenDto);
 
         } catch (ParseException e) {
             log.error(e.getMessage());
@@ -99,10 +97,10 @@ public class AuthService {
     }
 
 
-    private KakaoUserInfoDto getKakaoUserInfo(KakaoTokenDto kakaoTokenDto) throws ParseException {
-        log.info("KAKAO TOKEN DTO = {}",kakaoTokenDto);
+    private KakaoUserInfoDto getKakaoUserInfo(TokenDto tokenDto) throws ParseException {
+        log.info("KAKAO TOKEN DTO = {}", tokenDto);
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(kakaoTokenDto.getAccessToken());
+        headers.setBearerAuth(tokenDto.getAccessToken());
         headers.setContentType(MediaType.valueOf("application/x-www-form-urlencoded;charset=utf-8"));
         HttpEntity body = new HttpEntity(null, headers);
 
@@ -123,15 +121,15 @@ public class AuthService {
         JSONObject profile = (JSONObject) kakaoAccount.get("profile");
         String nickname = String.valueOf(profile.get("nickname"));
         String email = String.valueOf(kakaoAccount.get("email"));
-        String accessToken = kakaoTokenDto.getAccessToken();
-        String refreshToken = kakaoTokenDto.getRefreshToken();
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
 
         log.info("Nickname = {}, email = {}, accessToken = {}, refreshToken = {}", nickname, email, accessToken, refreshToken);
 
         return new KakaoUserInfoDto(nickname, email, accessToken, refreshToken);
     }
 
-    public SuccessResponse register(RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(RegisterRequest registerRequest) {
 
         String username = registerRequest.getUsername();
         String nickname = registerRequest.getNickname();
@@ -140,41 +138,43 @@ public class AuthService {
         User user = new User();
         user.createUser(username,nickname,email,password,null);
         userRepository.save(user);
-        return new SuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 
-    public Object checkEmailDuplicate(String email) {
+    public ResponseEntity<?> checkEmailDuplicate(String email) {
         if (!userRepository.existsByEmail(email)) {
-            return new SuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage());
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
         }
-        return new ErrorResponse(ResponseStatus.DUPLICATE_EMAIL.getStatus(), ResponseStatus.DUPLICATE_EMAIL.getMessage());
+        throw new UserException(StatusCode.DUPLICATE_EMAIL);
     }
 
-    public Object localLogin(LocalLoginRequest localLoginRequest) {
+    public ResponseEntity<?> localLogin(LocalLoginRequest localLoginRequest) {
         Optional<User> findUser = userRepository.findByEmailAndPassword(localLoginRequest.getEmail(), localLoginRequest.getPassword());
         if (findUser.isPresent()) {
             String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
             String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
             findUser.get().updateRefreshToken(refreshToken);
             userRepository.save(findUser.get());
-            return new LoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), accessToken, refreshToken);
+            TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), tokenDto));
         } else {
-            return new ErrorResponse(ResponseStatus.NOT_EXIST_USER.getStatus(), ResponseStatus.NOT_EXIST_USER.getMessage());
+            throw new UserException(StatusCode.USER_NOT_FOUND);
         }
     }
 
-    public Object reissue(String token) {
+    public ResponseEntity<?> reissue(String token) {
         if (jwtUtils.isValidToken(token)) {
             Optional<User> findUser = userRepository.findByRefreshToken(token);
             if (findUser.isPresent()) {
                 String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
                 String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
                 findUser.get().updateRefreshToken(refreshToken);
-                return new LoginSuccessResponse(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), accessToken, refreshToken);
+                TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+                return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), tokenDto));
             } else {
-                return new ErrorResponse(ResponseStatus.NOT_EXIST_USER.getStatus(), ResponseStatus.NOT_EXIST_USER.getMessage());
+                throw new UserException(StatusCode.USER_NOT_FOUND);
             }
         }
-        return new ErrorResponse(ResponseStatus.LOGIN_REQUIRED.getStatus(), ResponseStatus.LOGIN_REQUIRED.getMessage());
+        throw new UserException(StatusCode.LOGIN_REQUIRED);
     }
 }

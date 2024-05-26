@@ -1,5 +1,7 @@
 package CodeIt.Ytrip.common;
 
+import CodeIt.Ytrip.common.exception.StatusCode;
+import CodeIt.Ytrip.common.exception.TokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -58,17 +60,21 @@ public class JwtUtils {
             return true;
         } catch (ExpiredJwtException exception) {
             log.error("token Expired");
-            return false;
+            throw new TokenException(StatusCode.TOKEN_EXPIRED);
         } catch (JwtException exception) {
             log.error("Token Tampered");
-            return false;
+            throw new TokenException(StatusCode.TOKEN_IS_TAMPERED);
         } catch (NullPointerException exception) {
             log.error("Token is Null");
-            return false;
+            throw new TokenException(StatusCode.TOKEN_IS_NULL);
         }
     }
 
     public String splitBearerToken(String bearerToken) {
-        return bearerToken.split(" ")[1];
+        try{
+            return bearerToken.split(" ")[1];
+        } catch (NullPointerException e) {
+            throw new TokenException(StatusCode.TOKEN_IS_NULL);
+        }
     }
 }
