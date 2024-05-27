@@ -45,10 +45,4 @@ public class AuthController {
         String refreshToken = body.get("refresh_token");
         return authService.reissue(refreshToken);
     }
-
-    @PostMapping("/naver/login")
-    public ResponseEntity<?> naverLogin(@RequestBody Map<String, String> request) {
-        String code = request.get("code");
-        return authService.naverLogin(code);
-    }
 }
