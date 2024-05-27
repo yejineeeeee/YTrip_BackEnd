@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.auth.service;
 
+import CodeIt.Ytrip.auth.dto.NaverUserInfoDto;
 import CodeIt.Ytrip.auth.dto.TokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,12 @@ public class AuthService {
     private String redirectUri;
     @Value("${KAKAO.REST.API.KEY}")
     private String restAPiKey;
+    @Value("${NAVER.CLIENT.ID}")
+    private String naverClientId;
+    @Value("${NAVER.CLIENT.SECRET}")
+    private String naverClientSecret;
+    @Value("${NAVER.REDIRECT.URI}")
+    private String naverRedirectUri;
     private final JwtUtils jwtUtils;
 
     private final UserRepository userRepository;
@@ -176,5 +184,92 @@ public class AuthService {
             }
         }
         throw new UserException(StatusCode.LOGIN_REQUIRED);
+    }
+
+    public ResponseEntity<?> naverLogin(String code) {
+        NaverUserInfoDto naverUserInfo = getNAccessToken(code);
+
+        User user = new User();
+        user.createUser(
+                naverUserInfo.getNickName(),
+                naverUserInfo.getNickName(),
+                naverUserInfo.getEmail(),
+                null,
+                naverUserInfo.getRefreshToken()
+        );
+
+        userRepository.save(user);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), naverUserInfo));
+    }
+
+    private NaverUserInfoDto getNAccessToken(String code) {
+        log.info("NAVER code = {}", code);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "authorization_code");
+            params.add("client_id", naverClientId);
+            params.add("client_secret", naverClientSecret);
+            params.add("redirect_uri", naverRedirectUri);
+            params.add("code", code);
+
+            HttpEntity<MultiValueMap<String, String>> naverRequest = new HttpEntity<>(params, headers);
+            log.info("NAVER REQUEST = {}", naverRequest);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> naverTokenResponse = restTemplate.exchange(
+                    "https://nid.naver.com/oauth2.0/token",
+                    HttpMethod.POST,
+                    naverRequest,
+                    String.class
+            );
+
+            log.info("NAVER TOKEN = {}", naverTokenResponse.getBody());
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(naverTokenResponse.getBody());
+
+            TokenDto tokenDto = new TokenDto(
+                    (String) jsonObject.get("access_token"),
+                    (String) jsonObject.get("refresh_token"));
+
+            return getNaverUserInfo(tokenDto);
+
+        } catch (ParseException e) {
+            log.error(e.getMessage());
+        }
+
+        return null;
+    }
+    private NaverUserInfoDto getNaverUserInfo(TokenDto tokenDto) throws ParseException {
+        log.info("NAVER TOKEN DTO = {}", tokenDto);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(tokenDto.getAccessToken());
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<?> body = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> naverUserResponse = restTemplate.exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.POST,
+                body,
+                String.class
+        );
+
+        log.info("NAVER USER = {}", naverUserResponse.getBody());
+
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(naverUserResponse.getBody());
+        JSONObject response = (JSONObject) jsonObject.get("response");
+
+        String nickname = (String) response.get("nickname");
+        String email = (String) response.get("email");
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+
+        log.info("Nickname = {}, email = {}, accessToken = {}, refreshToken = {}", nickname, email, accessToken, refreshToken);
+
+        return new NaverUserInfoDto(nickname, email, accessToken, refreshToken);
     }
 }
