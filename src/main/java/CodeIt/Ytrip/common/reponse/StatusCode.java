@@ -1,4 +1,4 @@
-package CodeIt.Ytrip.common.exception;
+package CodeIt.Ytrip.common.reponse;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

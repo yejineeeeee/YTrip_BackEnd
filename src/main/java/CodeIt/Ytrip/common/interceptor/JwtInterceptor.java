@@ -1,7 +1,7 @@
 package CodeIt.Ytrip.common.interceptor;
 
 import CodeIt.Ytrip.common.JwtUtils;
-import CodeIt.Ytrip.common.exception.StatusCode;
+import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.exception.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

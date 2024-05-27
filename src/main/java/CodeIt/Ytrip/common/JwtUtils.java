@@ -1,6 +1,6 @@
 package CodeIt.Ytrip.common;
 
-import CodeIt.Ytrip.common.exception.StatusCode;
+import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.exception.TokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

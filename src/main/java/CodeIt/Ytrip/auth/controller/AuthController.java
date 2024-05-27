@@ -3,6 +3,7 @@ package CodeIt.Ytrip.auth.controller;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.service.AuthService;
+import CodeIt.Ytrip.auth.service.SocialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,11 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final SocialService socialService;
     @PostMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> request) {
         String code = request.get("code");
-        return authService.kakaoLogin(code);
+        return socialService.kakaoLogin(code);
     }
 
     @PostMapping("/register")
@@ -48,6 +50,6 @@ public class AuthController {
     @PostMapping ("/naver/login")
     public ResponseEntity<?> naverLogin(@RequestBody Map<String, String> request) {
         String code = request.get("code");
-        return authService.naverLogin(code);
+        return socialService.naverLogin(code);
     }
 }

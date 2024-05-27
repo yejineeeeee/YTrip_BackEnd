@@ -1,6 +1,5 @@
 package CodeIt.Ytrip.common.reponse;
 
-import CodeIt.Ytrip.common.exception.StatusCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
