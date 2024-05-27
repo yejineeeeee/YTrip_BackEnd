@@ -32,5 +32,11 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> RunTimeExceptionHandler(RuntimeException e) {
+        log.error("Token Exception = {}, {}", e.getMessage(), e.getStatus());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
+    }
+
 
 }

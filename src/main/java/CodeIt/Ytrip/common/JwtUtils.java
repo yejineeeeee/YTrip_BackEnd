@@ -23,17 +23,17 @@ public class JwtUtils {
     @Value("${JWT.SECRET.KEY}")
     private String key;
 
-    public String generateToken(Long userId, int expireTime, String tokenName) {
+    public String generateToken(String email, int expireTime, String tokenName) {
         return Jwts.builder()
-                .claims(createClaims(userId))
+                .claims(createClaims(email))
                 .expiration(createExpireDate(expireTime))
                 .signWith(createSigningKey())
                 .compact();
     }
 
-    private Map<String, Object> createClaims(Long userId) {
+    private Map<String, Object> createClaims(String email) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
+        claims.put("email", email);
         return claims;
     }
 

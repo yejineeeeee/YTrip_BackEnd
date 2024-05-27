@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -13,7 +14,6 @@ public class User {
     @Id @GeneratedValue
     @Column(name = "user_id")
     private Long id;
-    private String username;
     private String nickname;
     private String email;
     private String password;
@@ -21,8 +21,7 @@ public class User {
 
     public User() {}
 
-    public void createUser(String username, String nickname, String email, String password, String refreshToken) {
-        this.username = username;
+    public void createUser(String nickname, String email, String password, String refreshToken) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;

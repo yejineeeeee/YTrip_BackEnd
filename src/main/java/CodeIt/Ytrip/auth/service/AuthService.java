@@ -4,6 +4,7 @@ import CodeIt.Ytrip.auth.dto.TokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
+import CodeIt.Ytrip.common.exception.RuntimeException;
 import CodeIt.Ytrip.common.exception.StatusCode;
 import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.JwtUtils;
@@ -41,16 +42,18 @@ public class AuthService {
 
     public ResponseEntity<?> kakaoLogin(String code) {
         KakaoUserInfoDto kakaoUserInfo = getAccessToken(code);
-
         User user = new User();
-        user.createUser(
-                kakaoUserInfo.getNickName(),
-                kakaoUserInfo.getNickName(),
-                kakaoUserInfo.getEmail(),
-                null,
-                kakaoUserInfo.getRefreshToken()
-        );
-
+        Optional<User> findUser = userRepository.findByEmail(kakaoUserInfo.getEmail());
+        if (findUser.isPresent()) {
+           user.updateRefreshToken(kakaoUserInfo.getRefreshToken());
+        } else {
+            user.createUser(
+                    kakaoUserInfo.getNickName(),
+                    kakaoUserInfo.getEmail(),
+                    null,
+                    kakaoUserInfo.getRefreshToken()
+            );
+        }
         userRepository.save(user);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), kakaoUserInfo));
     }
@@ -90,10 +93,8 @@ public class AuthService {
             return getKakaoUserInfo(tokenDto);
 
         } catch (ParseException e) {
-            log.error(e.getMessage());
+            throw new RuntimeException(StatusCode.INTERNAL_SERVER_ERROR);
         }
-
-        return null;
     }
 
 
@@ -121,9 +122,8 @@ public class AuthService {
         JSONObject profile = (JSONObject) kakaoAccount.get("profile");
         String nickname = String.valueOf(profile.get("nickname"));
         String email = String.valueOf(kakaoAccount.get("email"));
-        String accessToken = tokenDto.getAccessToken();
-        String refreshToken = tokenDto.getRefreshToken();
-
+        String accessToken = jwtUtils.generateToken(email, 1000 * 60 * 60, "AccessToken");
+        String refreshToken = jwtUtils.generateToken(email, 1000 * 60 * 60 * 24, "RefreshToken");
         log.info("Nickname = {}, email = {}, accessToken = {}, refreshToken = {}", nickname, email, accessToken, refreshToken);
 
         return new KakaoUserInfoDto(nickname, email, accessToken, refreshToken);
@@ -131,12 +131,11 @@ public class AuthService {
 
     public ResponseEntity<?> register(RegisterRequest registerRequest) {
 
-        String username = registerRequest.getUsername();
         String nickname = registerRequest.getNickname();
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
         User user = new User();
-        user.createUser(username,nickname,email,password,null);
+        user.createUser(nickname,email,password,null);
         userRepository.save(user);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
@@ -151,8 +150,8 @@ public class AuthService {
     public ResponseEntity<?> localLogin(LocalLoginRequest localLoginRequest) {
         Optional<User> findUser = userRepository.findByEmailAndPassword(localLoginRequest.getEmail(), localLoginRequest.getPassword());
         if (findUser.isPresent()) {
-            String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
-            String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
+            String accessToken = jwtUtils.generateToken(findUser.get().getEmail(), 1000 * 60 * 60, "AccessToken");
+            String refreshToken = jwtUtils.generateToken(findUser.get().getEmail(), 1000 * 60 * 60 * 24, "RefreshToken");
             findUser.get().updateRefreshToken(refreshToken);
             userRepository.save(findUser.get());
             TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
@@ -166,8 +165,8 @@ public class AuthService {
         if (jwtUtils.isValidToken(token)) {
             Optional<User> findUser = userRepository.findByRefreshToken(token);
             if (findUser.isPresent()) {
-                String accessToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60, "AccessToken");
-                String refreshToken = jwtUtils.generateToken(findUser.get().getId(), 1000 * 60 * 60 * 24, "RefreshToken");
+                String accessToken = jwtUtils.generateToken(findUser.get().getEmail(), 1000 * 60 * 60, "AccessToken");
+                String refreshToken = jwtUtils.generateToken(findUser.get().getEmail(), 1000 * 60 * 60 * 24, "RefreshToken");
                 findUser.get().updateRefreshToken(refreshToken);
                 TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
                 return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), tokenDto));
