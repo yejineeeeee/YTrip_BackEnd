@@ -16,16 +16,16 @@ class JwtUtilsTest {
     
     @Test
     public void 토큰_생성() throws Exception {
-        String s = jwtUtils.generateToken(10L, 1000 * 60 * 60, "AccessToken");
+        String s = jwtUtils.generateToken("test", 1000 * 60 * 60, "AccessToken");
         Assertions.assertNotNull(s);
         System.out.println("s = " + s);
     }
     
     @Test
     public void 토큰_복호화() {
-        String token = jwtUtils.generateToken(10L, 1000 * 60 * 60, "AccessToken");
+        String token = jwtUtils.generateToken("test", 1000 * 60 * 60, "AccessToken");
         Claims claims = jwtUtils.getClaims(token);
-        assertThat(claims.get("userId")).isEqualTo(10);
+        assertThat(claims.get("email")).isEqualTo("test");
     }
 
 }
