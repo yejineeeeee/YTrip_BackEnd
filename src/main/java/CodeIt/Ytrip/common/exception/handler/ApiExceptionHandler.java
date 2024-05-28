@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.common.exception.handler;
 
+import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.exception.RuntimeException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.exception.TokenException;
@@ -38,8 +39,14 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> RunTimeExceptionHandler(RuntimeException e) {
-        log.error("Token Exception = {}, {}", e.getMessage(), e.getStatus());
+        log.error("RunTimeException = {}, {}", e.getMessage(), e.getStatus());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<?> NoSuchExceptionHandler(NoSuchElementException e) {
+        log.error("NoSuchException = {}, {}", e.getMessage(), e.getStatus());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
     }
 
 
