@@ -3,6 +3,7 @@ package CodeIt.Ytrip.config;
 import CodeIt.Ytrip.common.interceptor.JwtInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,5 +23,21 @@ public class WebConfig implements WebMvcConfigurer {
 //                .addPathPatterns("/**")
 //                .excludePathPatterns("/api/auth/**","/test/**");
 //    }
+
+    /**
+     * CORS 설정
+     * 현재 모든 리소스의 요청을 허용
+     * 추후 프론트 서버만 요청 허용하도록 변경 필요
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("Authorization", "Content-Type")
+                .exposedHeaders("Custom-Header")
+//                .allowCredentials(true)
+                .maxAge(3600);
+    }
 }
 
