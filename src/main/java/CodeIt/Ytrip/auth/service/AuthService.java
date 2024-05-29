@@ -32,6 +32,10 @@ public class AuthService {
         String nickname = registerRequest.getNickname();
         String email = registerRequest.getEmail();
         String password = registerRequest.getPassword();
+        Optional<User> findUser = userRepository.findByEmail(email);
+        if (findUser.isPresent()) {
+            throw new UserException(StatusCode.DUPLICATE_EMAIL);
+        }
         User user = new User();
         user.createUser(nickname,email,password,null);
         userRepository.save(user);
