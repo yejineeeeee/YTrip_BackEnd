@@ -14,7 +14,7 @@ public class VideoInfoDto {
     private String content;
     private String url;
     private String tag;
-    private Integer likeCount;
+    private int likeCount;
 
     public static VideoInfoDto from(Video video) {
         return VideoInfoDto.builder()

@@ -27,7 +27,7 @@ public class Video {
     private String url;
 
     @Column(name = "likes_count")
-    private Integer likeCount;
+    private int likeCount;
 
     private String tag;
 
@@ -45,5 +45,13 @@ public class Video {
                .likeCount(likeCount)
                .tag(tag)
                .build();
+    }
+
+    public void incrementLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decrementLikeCount() {
+        this.likeCount--;
     }
 }
