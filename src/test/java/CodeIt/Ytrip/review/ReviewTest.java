@@ -28,7 +28,7 @@ class ReviewTest {
         Video video = Video.of("Test Video Title", "Test Video Content", "url", 10, "Test Video Tag");
         em.persist(video);
 
-        Review review = new Review(user, video, "Test Review Content");
+        Review review = Review.of(user, video, "Test Review Content");
         em.persist(review);
 
         //when

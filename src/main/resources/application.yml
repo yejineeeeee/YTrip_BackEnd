@@ -4,7 +4,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         #        show_sql: true
@@ -17,3 +17,13 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
 
+#'2000','4','여기는 울릉도 입니다','울릉도,바다,여행','탈한국급 바다 울릉도에 가보자 【우리나라8】','https://www.youtube.com/watch?v=csKITZD6-2g'
+#'1243','2','한 달 살기 1등 앱 \'리브애니웨어\'를 통해서\n450년 된 시골집에서 한 달 살기 시작합니다.\n직거래로 사기 당하지 마시고\n리브애니웨어를 통해 안전하게 예약하세요.','한옥,전토','450년 전에 지어진 한옥에서 한달살기 시작 - 국내여행(1)','https://www.youtube.com/watch?v=2Dw8ZjXZ4P4'
+#'1000','9','test2','te,st,2','test2 타이틀','test2 url'
+#'888','10','test3','tes,t3','test3 타이틀',NULL
+#'731','8','test1','t,e,s,t,1','test1 타이틀','test1 url'
+#'563','7','당분간은 발걸음이 가는대로 배낭메고 전국 여행을 떠나보자','배낭,전국일주','오랜만에 배낭 들쳐업고 아주 낯선 곳으로 - 국내1\n\n여행가 제이 [Jay world traveler]\n구독자 68.4만명\n\n오랜만에 배낭 들쳐업고 아주 낯선 곳으로 - 국내1\n\n여행가 제이 [Jay world traveler]\n구독자 68.4만명\n\n오랜만에 배낭 들쳐업고 아주 낯선 곳으로 - 국내1','https://www.youtube.com/watch?v=bTfcvLNfZRE'
+#'342','5','빠니보틀과 충주맨의 충주','충주맨,먹거리','볼거리 먹거리 즐길거리 가득한 충주에서의 1박 2일 【쇼트트립】\n\n빠니보틀 Pani Bottle\n구독자 222만명\n\n볼거리 먹거리 즐길거리 가득한 충주에서의 1박 2일 【쇼트트립】\n\n빠니보틀 Pani Bottle\n구독자 222만명\n\n볼거리 먹거리 즐길거리 가득한 충주에서의 1박 2일 【쇼트트립】','youtube.com/watch?v=NSNlfn0tfP0'
+#'201','1','여긴 유명해지면 안 되는 곳인데,,,\n진짜 나만... 나만 알고 싶은데...\n큰맘 먹고 무료 공개해유...','인천,시장','[백종원의 님아 그 시장을 가오_EP.45_인천] 못 먹으면 한 될까봐 다 시켰습니다','https://www.youtube.com/watch?v=or2TgTRjPq8'
+#'123','6','다마스를 타고 전국 일주를 떠나보자','다마스,전국일주,빠니보틀','다마스 폭스바겐 스킨으로 전국일주를 해보자 【우리나라4】','https://www.youtube.com/watch?v=mSnUFjy7840'
+#'112','3','코카-콜라의 짜릿함과 잘 어울리는 음식을 맛볼 수 있는 전국의 550개의 맛집을 선정!\r\n코카-콜라와 잘 어울리는 맛집이 궁금하다면? \r\n블루리본 서베이가 선정한 \'코카-콜라 레드리본 맛집\'을 찾아보세요!','충주,빠니보틀','87년생 도플갱어끼리 떠나는 1박2일 춘천 풀코스 여행 【쇼트트립】','https://www.youtube.com/watch?v=l_PdlEQQjf4&t=3s'

@@ -46,6 +46,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> NoSuchExceptionHandler(NoSuchElementException e) {
         log.error("NoSuchException = {}, {}", e.getMessage(), e.getStatus());
+
+        if (e.getStatus().equals(StatusCode.REVIEW_NOT_FOUND.getCode())) {
+            return ResponseEntity.ok().body(ErrorResponse.of(e.getStatus(), e.getMessage()));
+        }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
     }
 

@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.review.domain;
 
+import CodeIt.Ytrip.common.domain.BaseEntity;
 import CodeIt.Ytrip.like.domain.ReviewLike;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.video.domain.Video;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Review {
+public class Review extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "review_id")
@@ -31,9 +32,11 @@ public class Review {
     @OneToMany(mappedBy = "review")
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
+    private String title;
     private String content;
+    private Integer likeCount;
 
-    public Review of(User user, Video video, String content) {
+    public static Review of(User user, Video video, String content) {
         return Review.builder()
                 .user(user)
                 .video(video)
