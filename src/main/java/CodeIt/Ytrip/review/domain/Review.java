@@ -2,6 +2,7 @@ package CodeIt.Ytrip.review.domain;
 
 import CodeIt.Ytrip.common.domain.BaseEntity;
 import CodeIt.Ytrip.like.domain.ReviewLike;
+import CodeIt.Ytrip.review.dto.SaveReviewDto;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.video.domain.Video;
 import jakarta.persistence.*;
@@ -34,7 +35,7 @@ public class Review extends BaseEntity {
 
     private String title;
     private String content;
-    private Integer likeCount;
+    private int score;
 
     public static Review of(User user, Video video, String content) {
         return Review.builder()
@@ -43,9 +44,19 @@ public class Review extends BaseEntity {
                 .content(content)
                 .build();
     }
-    public Review(User user, Video video, String content) {
-        this.user = user;
-        this.video = video;
-        this.content = content;
+
+    public static Review of(User user, Video video, SaveReviewDto saveReviewDto) {
+        return Review.builder()
+                .user(user)
+                .video(video)
+                .content(saveReviewDto.getContent())
+                .score(saveReviewDto.getScore())
+                .title(saveReviewDto.getTitle())
+                .build();
     }
+
+//    public static Review from(SaveReviewDto saveReviewDto) {
+//        return Review.builder()
+//                .user()
+//    }
 }

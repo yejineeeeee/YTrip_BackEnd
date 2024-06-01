@@ -14,7 +14,7 @@ public class ReviewDto {
     private Long id;
     private String title;
     private String content;
-    private Integer likeCount;
+    private int score;
     private LocalDateTime createdAt;
 
     public static ReviewDto from(Review review) {
@@ -22,7 +22,7 @@ public class ReviewDto {
                 .id(review.getId())
                 .title(review.getTitle())
                 .content(review.getContent())
-                .likeCount(review.getLikeCount())
+                .score(review.getScore())
                 .createdAt(review.getCreatedAt())
                 .build();
     }
