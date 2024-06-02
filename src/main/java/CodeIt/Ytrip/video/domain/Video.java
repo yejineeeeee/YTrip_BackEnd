@@ -3,10 +3,7 @@ package CodeIt.Ytrip.video.domain;
 import CodeIt.Ytrip.like.domain.VideoLike;
 import CodeIt.Ytrip.review.domain.Review;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +25,9 @@ public class Video {
 
     @Column(name = "likes_count")
     private int likeCount;
-
+    public void setLikecount(int likeCount) {
+        this.likeCount = likeCount;
+    }
     private String tag;
 
     @OneToMany(mappedBy = "video")
@@ -47,11 +46,4 @@ public class Video {
                .build();
     }
 
-    public void incrementLikeCount() {
-        this.likeCount++;
-    }
-
-    public void decrementLikeCount() {
-        this.likeCount--;
-    }
 }
