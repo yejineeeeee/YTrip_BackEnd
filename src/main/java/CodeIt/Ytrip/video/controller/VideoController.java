@@ -26,8 +26,8 @@ public class VideoController {
         return videoService.getVideoDetailInfo(videoId);
     }
 
-//    @PostMapping("/{video_id}/likes")
-//    public ResponseEntity<?> VideoLike(@PathVariable("video_id") Long videoId) {
-//        return videoService.likeVideo(videoId);
-//    }
+    @PostMapping("/{video_id}/likes")
+    public ResponseEntity<?> VideoLike(@PathVariable("video_id") Long videoId) {
+        return videoService.VideoLike(videoId);
+    }
 }
