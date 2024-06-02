@@ -1,13 +1,15 @@
 package CodeIt.Ytrip.video.controller;
 
+import CodeIt.Ytrip.common.JwtUtils;
+import CodeIt.Ytrip.common.reponse.StatusCode;
+import CodeIt.Ytrip.common.reponse.SuccessResponse;
 import CodeIt.Ytrip.video.service.VideoService;
-import lombok.Getter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -16,6 +18,8 @@ import java.util.List;
 public class VideoController {
 
     private final VideoService videoService;
+    private JwtUtils jwtUtils;
+
     @GetMapping
     public ResponseEntity<?> getVideoList() {
         return videoService.getVideoList();
@@ -27,7 +31,12 @@ public class VideoController {
     }
 
     @PostMapping("/{video_id}/likes")
-    public ResponseEntity<?> VideoLike(@PathVariable("video_id") Long videoId) {
-        return videoService.VideoLike(videoId);
+    public ResponseEntity<?> VideoLike(@PathVariable("video_id") Long videoId, HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = jwtUtils.splitBearerToken(bearerToken);
+        String email = (String) jwtUtils.getClaims(token).get("email");
+
+        videoService.VideoLike(videoId, email);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 }

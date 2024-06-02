@@ -33,7 +33,7 @@ public class Video {
     @OneToMany(mappedBy = "video")
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoLike>  videoLikes = new ArrayList<>();
 
     public static Video of(String title, String content, String url, Integer likeCount, String tag) {

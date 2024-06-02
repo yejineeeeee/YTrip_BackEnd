@@ -5,6 +5,7 @@ import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.reponse.SuccessResponse;
+import CodeIt.Ytrip.like.domain.ReviewLike;
 import CodeIt.Ytrip.review.domain.Review;
 import CodeIt.Ytrip.review.dto.ReviewDto;
 import CodeIt.Ytrip.review.dto.ReviewPageResponse;
@@ -16,6 +17,7 @@ import CodeIt.Ytrip.video.domain.Video;
 import CodeIt.Ytrip.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,12 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final VideoRepository videoRepository;
+    @Autowired
+    public ReviewService(ReviewRepository reviewRepository, VideoRepository videoRepository, UserRepository userRepository) {
+        this.reviewRepository = reviewRepository;
+        this.videoRepository = videoRepository;
+        this.userRepository = userRepository;
+    }
 
    @Transactional(readOnly = true)
     public ResponseEntity<?> getReviewList(Long videoId, String sort, int page) {
