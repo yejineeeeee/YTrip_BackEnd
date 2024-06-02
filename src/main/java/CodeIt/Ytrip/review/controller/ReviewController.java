@@ -1,6 +1,8 @@
 package CodeIt.Ytrip.review.controller;
 
 import CodeIt.Ytrip.common.JwtUtils;
+import CodeIt.Ytrip.common.reponse.StatusCode;
+import CodeIt.Ytrip.common.reponse.SuccessResponse;
 import CodeIt.Ytrip.review.dto.SaveReviewDto;
 import CodeIt.Ytrip.review.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,4 +38,13 @@ public class ReviewController {
         return reviewService.saveReview(videoId, email, saveReviewDto);
     }
 
+//    @PostMapping("/review/{review-id}/like")
+//    public ResponseEntity<?> LikeReview(@PathVariable("review-id") Long reviewId, HttpServletRequest request) {
+//        String bearerToken = request.getHeader("Authorization");
+//        String token = jwtUtils.splitBearerToken(bearerToken);
+//        String email = (String) jwtUtils.getClaims(token).get("email");
+//
+//        reviewService.LikeReview(reviewId, email);
+//        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
+//    }
 }

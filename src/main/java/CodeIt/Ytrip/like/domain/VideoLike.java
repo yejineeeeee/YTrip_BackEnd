@@ -24,4 +24,8 @@ public class VideoLike {
     @JoinColumn(name = "video_id")
     private Video video;
 
+    public VideoLike(Video video, User user) {
+        this.video = video;
+        this.user = user;
+    }
 }
