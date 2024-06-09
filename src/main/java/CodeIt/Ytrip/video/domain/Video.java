@@ -30,25 +30,27 @@ public class Video extends BaseEntity {
     public void setLikecount(int likeCount) {
         this.likeCount = likeCount;
     }
-    private String tag;
+
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "video_id"))
+    private List<String> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "video")
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VideoLike>  videoLikes = new ArrayList<>();
+    private List<VideoLike> videoLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "video")
-    private List<VideoCourse> cours = new ArrayList<>();
+    private List<VideoCourse> course = new ArrayList<>();
 
-    public static Video of(String title, String content, String url, Integer likeCount, String tag) {
-       return Video.builder()
-               .title(title)
-               .content(content)
-               .url(url)
-               .likeCount(likeCount)
-               .tag(tag)
-               .build();
+    public static Video of(String title, String content, String url, int likeCount, List<String> tags) {
+        return Video.builder()
+                .title(title)
+                .content(content)
+                .url(url)
+                .likeCount(likeCount)
+                .tags(tags)
+                .build();
     }
-
 }
