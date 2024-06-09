@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.user.domain;
 
+import CodeIt.Ytrip.course.domain.UserCourse;
 import CodeIt.Ytrip.like.domain.ReviewLike;
 import CodeIt.Ytrip.like.domain.VideoLike;
 import CodeIt.Ytrip.review.domain.Review;
@@ -36,6 +37,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<VideoLike> videoLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserCourse> userCourses = new ArrayList<>();
 
     public void createUser(String nickname, String email, String password, String refreshToken) {
         this.nickname = nickname;
