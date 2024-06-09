@@ -33,8 +33,7 @@ public class Video extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "video_tags", joinColumns = @JoinColumn(name = "video_id"))
-    @Builder.Default
-    private final List<String> tags = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "video")
     @Builder.Default
