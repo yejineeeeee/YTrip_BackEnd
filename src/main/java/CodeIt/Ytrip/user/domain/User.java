@@ -30,15 +30,19 @@ public class User extends BaseEntity {
     private String refreshToken;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<VideoLike> videoLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<UserCourse> userCourses = new ArrayList<>();
 
     public void createUser(String nickname, String email, String password, String refreshToken) {
