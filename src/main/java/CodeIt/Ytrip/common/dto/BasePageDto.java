@@ -1,13 +1,14 @@
 package CodeIt.Ytrip.common.dto;
 
 import CodeIt.Ytrip.review.dto.ReviewDto;
+import CodeIt.Ytrip.video.dto.VideoListDto;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 @Getter
 @Builder
-public class BasePageDto {
+public class BasePageDto<T> {
     private int currentPage;
     private int pageSize;
     private int totalPages;
@@ -15,8 +16,8 @@ public class BasePageDto {
     private boolean isFirst;
     private boolean isLast;
 
-    public static BasePageDto from(Page<ReviewDto> page) {
-        return BasePageDto.builder()
+    public static <T> BasePageDto<T> from(Page<T> page) {
+        return BasePageDto.<T>builder()
                 .currentPage(page.getNumber())
                 .pageSize(page.getSize())
                 .totalPages(page.getTotalPages())
