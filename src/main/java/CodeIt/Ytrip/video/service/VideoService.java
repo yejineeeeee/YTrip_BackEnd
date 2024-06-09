@@ -36,16 +36,20 @@ public class VideoService {
     private final VideoLikeRepository videoLikeRepository;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getVideoList(String sort, int page) {
+    public ResponseEntity<?> getVideoList(String sort, int page, String tag) {
         Pageable pageable = PageRequest.of(page, 20);
         Page<Video> videos;
 
-        if (sort.equals("score")) {
-            videos = videoRepository.findAllByOrderByLikeCountDesc(pageable);
-        } else if (sort.equals("latest")) {
-            videos = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
+        if (tag != null && !tag.isEmpty()) {
+            videos = videoRepository.findByTagsContaining(tag, pageable);
         } else {
-            throw new IllegalArgumentException("Invalid sort parameter");
+            if (sort.equals("score")) {
+                videos = videoRepository.findAllByOrderByLikeCountDesc(pageable);
+            } else if (sort.equals("latest")) {
+                videos = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
+            } else {
+                throw new IllegalArgumentException("Invalid sort parameter");
+            }
         }
 
         if (videos.isEmpty()) {

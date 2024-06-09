@@ -12,6 +12,7 @@ import java.util.List;
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
     List<Video> findTop12ByOrderByLikeCountDesc();
+    Page<Video> findByTagsContaining(String tag, Pageable pageable);
 
     Page<Video> findAllByOrderByLikeCountDesc(Pageable pageable);
 

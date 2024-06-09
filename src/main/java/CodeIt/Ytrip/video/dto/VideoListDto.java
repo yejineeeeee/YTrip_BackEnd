@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 @Data
 @Getter
 @Builder
@@ -13,14 +15,14 @@ public class VideoListDto {
     private Long id;
     private String title;
     private String url;
-    private String tag;
+    private List<String> tags;
 
     public static VideoListDto from(Video video) {
         return VideoListDto.builder()
                 .id(video.getId())
                 .title(video.getTitle())
                 .url(video.getUrl())
-                .tag(video.getTag())
+                .tags(video.getTags())
                 .build();
     }
 }

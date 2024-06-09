@@ -23,9 +23,11 @@ public class VideoController {
     @GetMapping
     public ResponseEntity<?> getVideoList(
             @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String tag
+
     ) {
-        return videoService.getVideoList(sort, page);
+        return videoService.getVideoList(sort, page, tag);
     }
 
     @GetMapping("/{video_id}")
