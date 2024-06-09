@@ -60,7 +60,7 @@ public class ReviewService {
         }
 
         Page<ReviewDto> reviewDtoPage = reviews.map(ReviewDto::from);
-        BasePageDto basePageDto = BasePageDto.from(reviewDtoPage);
+        BasePageDto<ReviewDto> basePageDto = BasePageDto.from(reviewDtoPage);
 
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), ReviewPageResponse.of(reviewDtoPage.getContent(), basePageDto)));
     }

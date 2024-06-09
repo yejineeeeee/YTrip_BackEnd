@@ -1,10 +1,12 @@
 package CodeIt.Ytrip.video.service;
 
+import CodeIt.Ytrip.common.dto.BasePageDto;
 import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.reponse.SuccessResponse;
 import CodeIt.Ytrip.like.domain.VideoLike;
+import CodeIt.Ytrip.review.dto.ReviewDto;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
 import CodeIt.Ytrip.video.domain.Video;
@@ -14,6 +16,9 @@ import CodeIt.Ytrip.video.repository.VideoLikeRepository;
 import CodeIt.Ytrip.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,14 +35,29 @@ public class VideoService {
     private final UserRepository userRepository;
     private final VideoLikeRepository videoLikeRepository;
 
-    public ResponseEntity<?> getVideoList() {
-        List<VideoListDto> videos = videoRepository.findTop12ByOrderByLikeCountDesc()
-                .stream().map(VideoListDto::from)
-                .toList();
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getVideoList(String sort, int page) {
+        Pageable pageable = PageRequest.of(page, 20);
+        Page<Video> videos;
 
-        log.info("Video size = {}", videos.size());
+        if (sort.equals("score")) {
+            videos = videoRepository.findAllByOrderByLikeCountDesc(pageable);
+        } else if (sort.equals("latest")) {
+            videos = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
+        } else {
+            throw new IllegalArgumentException("Invalid sort parameter");
+        }
 
-        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videos));
+        if (videos.isEmpty()) {
+            log.warn("No videos found for the given criteria");
+            throw new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND);
+        }
+
+        log.info("Video size = {}", videos.getSize());
+        Page<VideoListDto> videoListDtoPage = videos.map(VideoListDto::from);
+        BasePageDto<VideoListDto> basePageDto = BasePageDto.from(videoListDtoPage);
+
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), basePageDto));
     }
 
     public ResponseEntity<?> getVideoDetailInfo(Long videoId) {
@@ -72,4 +92,3 @@ public class VideoService {
         return videoRepository.findById(videoId).orElseThrow(() -> new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND));
     }
 }
-

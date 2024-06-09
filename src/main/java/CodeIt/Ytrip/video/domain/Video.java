@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.video.domain;
 
+import CodeIt.Ytrip.common.domain.BaseEntity;
 import CodeIt.Ytrip.course.domain.VideoCourse;
 import CodeIt.Ytrip.like.domain.VideoLike;
 import CodeIt.Ytrip.review.domain.Review;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Video {
+public class Video extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "video_id")
