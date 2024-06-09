@@ -3,21 +3,19 @@ package CodeIt.Ytrip.review.dto;
 import CodeIt.Ytrip.common.dto.BasePageDto;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.List;
 
 @Data
-@Getter
 @Builder
-public class ReviewPageResponse<T> {
-    private List<T> content;
-    private BasePageDto<T> pageInfo;
+public class ReviewPageResponse {
+    private List<ReviewDto> content;
+    private BasePageDto page_info;
 
-    public static <T> ReviewPageResponse<T> of(List<T> content, BasePageDto<T> pageInfo) {
-        return ReviewPageResponse.<T>builder()
+    public static ReviewPageResponse of(List<ReviewDto> content, BasePageDto basePageDto) {
+        return ReviewPageResponse.builder()
                 .content(content)
-                .pageInfo(pageInfo)
+                .page_info(basePageDto)
                 .build();
     }
 }

@@ -30,8 +30,8 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "video_id")
     private Video video;
 
-//    @OneToMany(mappedBy = "review")
-//    private List<ReviewLike> reviewLikes = new ArrayList<>();
+    @OneToMany(mappedBy = "review")
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     private String title;
     private String content;

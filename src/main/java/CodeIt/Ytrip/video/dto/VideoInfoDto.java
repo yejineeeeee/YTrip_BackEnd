@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Data
 @Getter
 @Builder
@@ -17,8 +15,6 @@ public class VideoInfoDto {
     private String url;
     private String tag;
     private int likeCount;
-    private LocalDateTime createdAt;
-
 
     public static VideoInfoDto from(Video video) {
         return VideoInfoDto.builder()
@@ -28,7 +24,6 @@ public class VideoInfoDto {
                 .url(video.getUrl())
                 .tag(video.getTag())
                 .likeCount(video.getLikeCount())
-                .createdAt(video.getCreatedAt())
                 .build();
     }
 }

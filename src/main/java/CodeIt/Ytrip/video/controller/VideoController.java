@@ -21,11 +21,8 @@ public class VideoController {
     private JwtUtils jwtUtils;
 
     @GetMapping
-    public ResponseEntity<?> getVideoList(
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "0") int page
-    ) {
-        return videoService.getVideoList(sort, page);
+    public ResponseEntity<?> getVideoList() {
+        return videoService.getVideoList();
     }
 
     @GetMapping("/{video_id}")
