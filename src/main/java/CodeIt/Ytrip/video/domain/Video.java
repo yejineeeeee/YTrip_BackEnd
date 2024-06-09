@@ -32,16 +32,20 @@ public class Video extends BaseEntity {
     }
 
     @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "video_id"))
-    private List<String> tags = new ArrayList<>();
+    @CollectionTable(name = "video_tags", joinColumns = @JoinColumn(name = "video_id"))
+    @Builder.Default
+    private final List<String> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "video")
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<VideoLike> videoLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "video")
+    @Builder.Default
     private List<VideoCourse> course = new ArrayList<>();
 
     public static Video of(String title, String content, String url, int likeCount, List<String> tags) {

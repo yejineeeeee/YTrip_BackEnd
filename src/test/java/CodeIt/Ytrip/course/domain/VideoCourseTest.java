@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @SpringBootTest
@@ -30,7 +31,7 @@ class VideoCourseTest {
 
         Video video = Video.builder()
                 .url("testURL")
-                .tag("testTag")
+                .tags(Arrays.asList("testTag"))
                 .title("testTitle")
                 .content("testContent")
                 .likeCount(100)
