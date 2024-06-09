@@ -31,6 +31,7 @@ public class Review extends BaseEntity {
     private Video video;
 
     @OneToMany(mappedBy = "review")
+    @Builder.Default
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     private String title;
