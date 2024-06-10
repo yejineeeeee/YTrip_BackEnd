@@ -36,8 +36,8 @@ public class CourseService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
 
-    public ResponseEntity<?> postUserCourse(PostCourseRequest postCourseRequest) {
-        Optional<User> findUser = userRepository.findById(postCourseRequest.getUserId());
+    public ResponseEntity<?> postUserCourse(PostCourseRequest postCourseRequest, String email) {
+        Optional<User> findUser = userRepository.findByEmail(email);
         User user = findUser.orElseThrow(() -> new UserException(StatusCode.USER_NOT_FOUND));
 
         List<CourseDto> courses = postCourseRequest.getCourse();

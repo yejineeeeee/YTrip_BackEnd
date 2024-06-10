@@ -1,7 +1,9 @@
 package CodeIt.Ytrip.course.controller;
 
+import CodeIt.Ytrip.common.JwtUtils;
 import CodeIt.Ytrip.course.dto.PostCourseRequest;
 import CodeIt.Ytrip.course.service.CourseService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,14 @@ import org.springframework.web.bind.annotation.*;
 public class CourseController {
 
     private final CourseService courseService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping
-    public ResponseEntity<?> postUserCourse(@RequestBody PostCourseRequest postCourseRequest) {
-        return courseService.postUserCourse(postCourseRequest);
+    public ResponseEntity<?> postUserCourse(@RequestBody PostCourseRequest postCourseRequest, HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = jwtUtils.splitBearerToken(bearerToken);
+        String email = (String) jwtUtils.getClaims(token).get("email");
+        return courseService.postUserCourse(postCourseRequest, email);
     }
     @GetMapping("/{video_id}")
     public ResponseEntity<?> getVideoCourse(@PathVariable("video_id") Long videoId) {
