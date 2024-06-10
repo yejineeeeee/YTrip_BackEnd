@@ -1,6 +1,6 @@
 package CodeIt.Ytrip.course.domain;
 
-import CodeIt.Ytrip.course.repository.CourseRepository;
+import CodeIt.Ytrip.course.repository.VideoCourseRepository;
 import CodeIt.Ytrip.place.repository.PlaceRepository;
 import CodeIt.Ytrip.video.domain.Video;
 import CodeIt.Ytrip.video.repository.VideoRepository;
@@ -23,7 +23,7 @@ class VideoCourseTest {
     private PlaceRepository placeRepository;
 
     @Autowired
-    private CourseRepository courseRepository;
+    private VideoCourseRepository videoCourseRepository;
 
     @Test
     public void 코스_저장() throws Exception {
@@ -44,10 +44,10 @@ class VideoCourseTest {
                 .video(video)
                 .build();
         //when
-        courseRepository.save(videoCourse);
+        videoCourseRepository.save(videoCourse);
 
         //then
-        Optional<VideoCourse> findCourse = courseRepository.findById(videoCourse.getId());
+        Optional<VideoCourse> findCourse = videoCourseRepository.findById(videoCourse.getId());
         Assertions.assertThat(findCourse.get().getPlaces()).isEqualTo("1,2");
     }
 
@@ -71,7 +71,7 @@ class VideoCourseTest {
 //                .video(video)
 //                .build();
 //        //when
-//        courseRepository.save(course);
+//        videoCourseRepository.save(course);
 //
 //        Place place = Place.builder()
 //                .name("place_name 1")
@@ -88,7 +88,7 @@ class VideoCourseTest {
 //        placeRepository.save(place2);
 //
 //        //then
-//        Optional<VideoCourse> findCourse = courseRepository.findById(course.getId());
+//        Optional<VideoCourse> findCourse = videoCourseRepository.findById(course.getId());
 //
 //        List<String> placeStrings = List.of(findCourse.get().getPlaces().split(","));
 //
