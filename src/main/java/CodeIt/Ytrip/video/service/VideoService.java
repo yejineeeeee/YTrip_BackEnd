@@ -43,7 +43,7 @@ public class VideoService {
         if (tag != null && !tag.isEmpty()) {
             videos = videoRepository.findByTagsContaining(tag, pageable);
         } else {
-            if (sort.equals("score")) {
+            if (sort.equals("likeCount")) {
                 videos = videoRepository.findAllByOrderByLikeCountDesc(pageable);
             } else if (sort.equals("latest")) {
                 videos = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
@@ -53,7 +53,6 @@ public class VideoService {
         }
 
         if (videos.isEmpty()) {
-            log.warn("No videos found for the given criteria");
             throw new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND);
         }
 
