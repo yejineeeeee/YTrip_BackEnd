@@ -28,6 +28,10 @@ public class ApiExceptionHandler {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
         }
 
+        if (e.getStatus().equals(StatusCode.USER_COURSE_NOT_FOUND.getCode())) {
+            return ResponseEntity.ok(ErrorResponse.of(StatusCode.USER_COURSE_NOT_FOUND.getCode(), StatusCode.USER_COURSE_NOT_FOUND.getMessage()));
+        }
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(e.getStatus(), e.getMessage()));
     }
 

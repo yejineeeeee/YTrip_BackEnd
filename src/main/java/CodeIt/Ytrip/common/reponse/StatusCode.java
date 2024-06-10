@@ -17,6 +17,7 @@ public enum StatusCode {
     VIDEO_NOT_FOUND("4006", "해당 영상을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND("4007", "리뷰를 찾을 수 없습니다."),
     PLACE_NOT_FOUND("4008", "해당 장소를 찾을 수 없습니다."),
+    USER_COURSE_NOT_FOUND("4009", "저장된 유저 코스를 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR("5000", "일시적인 오류입니다. 잠시후 다시 시도해 주세요."),
     ALREADY_LIKED("6000", "이미 좋아요가 되어있습니다.");
 

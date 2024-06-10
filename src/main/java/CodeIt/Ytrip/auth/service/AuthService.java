@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.auth.service;
 
+import CodeIt.Ytrip.auth.dto.LoginResponse;
 import CodeIt.Ytrip.auth.dto.TokenDto;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
@@ -57,7 +58,8 @@ public class AuthService {
             findUser.get().updateRefreshToken(refreshToken);
             userRepository.save(findUser.get());
             TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
-            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), tokenDto));
+            LoginResponse response = LoginResponse.of(findUser.get(), tokenDto);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), response));
         } else {
             throw new UserException(StatusCode.USER_NOT_FOUND);
         }

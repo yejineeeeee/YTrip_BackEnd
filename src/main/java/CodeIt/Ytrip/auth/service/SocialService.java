@@ -1,5 +1,6 @@
 package CodeIt.Ytrip.auth.service;
 
+import CodeIt.Ytrip.auth.dto.LoginResponse;
 import CodeIt.Ytrip.auth.dto.NaverUserInfoDto;
 import CodeIt.Ytrip.auth.dto.TokenDto;
 import CodeIt.Ytrip.auth.dto.KakaoUserInfoDto;
@@ -48,8 +49,11 @@ public class SocialService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoAccessToken(code);
         User user = new User();
         Optional<User> findUser = userRepository.findByEmail(kakaoUserInfo.getEmail());
+        TokenDto tokenDto = new TokenDto(kakaoUserInfo.getAccessToken(), kakaoUserInfo.getRefreshToken());
         if (findUser.isPresent()) {
-            user.updateRefreshToken(kakaoUserInfo.getRefreshToken());
+            findUser.get().updateRefreshToken(kakaoUserInfo.getRefreshToken());
+            LoginResponse response = LoginResponse.of(findUser.get(), tokenDto);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(),response));
         } else {
             user.createUser(
                     kakaoUserInfo.getNickName(),
@@ -57,9 +61,11 @@ public class SocialService {
                     null,
                     kakaoUserInfo.getRefreshToken()
             );
+            userRepository.save(user);
+
+            LoginResponse response = LoginResponse.of(user, tokenDto);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(),response));
         }
-        userRepository.save(user);
-        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), kakaoUserInfo));
     }
 
     private KakaoUserInfoDto getKakaoAccessToken(String code) {
@@ -137,8 +143,11 @@ public class SocialService {
         NaverUserInfoDto naverUserInfo = getNaverAccessToken(code);
         User user = new User();
         Optional<User> findUser = userRepository.findByEmail(naverUserInfo.getEmail());
+        TokenDto tokenDto = new TokenDto(naverUserInfo.getAccessToken(), naverUserInfo.getRefreshToken());
         if (findUser.isPresent()) {
-            user.updateRefreshToken(user.getRefreshToken());
+            findUser.get().updateRefreshToken(user.getRefreshToken());
+            LoginResponse response = LoginResponse.of(findUser.get(), tokenDto);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(),response));
         } else {
             user.createUser(
                     naverUserInfo.getNickName(),
@@ -146,9 +155,9 @@ public class SocialService {
                     null,
                     naverUserInfo.getRefreshToken()
             );
+            LoginResponse response = LoginResponse.of(user, tokenDto);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(),response));
         }
-        userRepository.save(user);
-        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), naverUserInfo));
     }
 
     private NaverUserInfoDto getNaverAccessToken(String code) {
