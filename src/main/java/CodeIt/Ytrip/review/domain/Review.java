@@ -56,8 +56,10 @@ public class Review extends BaseEntity {
                 .build();
     }
 
-//    public static Review from(SaveReviewDto saveReviewDto) {
-//        return Review.builder()
-//                .user()
-//    }
+    public void updateReview(SaveReviewDto saveReviewDto) {
+        this.title = saveReviewDto.getTitle();
+        this.content = saveReviewDto.getContent();
+        this.score = saveReviewDto.getScore();
+    }
+
 }

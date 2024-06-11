@@ -15,4 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByVideoIdOrderByScoreDesc(Long videoId, Pageable pageable);
     Page<Review> findByVideoIdOrderByCreatedAtDesc(Long videoId, Pageable pageable);
 
+    Optional<Review> findByIdAndUser(Long reviewId, User user);
+
 }
