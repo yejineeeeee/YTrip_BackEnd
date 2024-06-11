@@ -13,4 +13,3 @@ public class SaveReviewDto {
     private String content;
     private int score;
 }
-

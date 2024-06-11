@@ -25,26 +25,30 @@ public class ReviewController {
             @PathVariable("video-id") Long videoId,
             @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page
-//            @PageableDefault(size = 2) Pageable pageable
     ) {
         return reviewService.getReviewList(videoId, sort, page);
     }
 
     @PostMapping("/video/{video-id}/review")
-    public ResponseEntity<?> saveReview(@PathVariable("video-id") Long videoId, @RequestBody SaveReviewDto saveReviewDto, HttpServletRequest request) {
+    public ResponseEntity<?> saveReview(@PathVariable("video-id") Long videoId,
+                                        @RequestBody SaveReviewDto saveReviewDto,
+                                        HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         String token = jwtUtils.splitBearerToken(bearerToken);
         String email = (String) jwtUtils.getClaims(token).get("email");
         return reviewService.saveReview(videoId, email, saveReviewDto);
     }
 
-//    @PostMapping("/review/{review-id}/like")
-//    public ResponseEntity<?> LikeReview(@PathVariable("review-id") Long reviewId, HttpServletRequest request) {
-//        String bearerToken = request.getHeader("Authorization");
-//        String token = jwtUtils.splitBearerToken(bearerToken);
-//        String email = (String) jwtUtils.getClaims(token).get("email");
-//
-//        reviewService.LikeReview(reviewId, email);
-//        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
-//    }
+    @PatchMapping("/video/{video-id}/review/{review-id}")
+    public ResponseEntity<?> patchReview(
+            @PathVariable("video-id") Long videoId,
+            @PathVariable("review-id") Long reviewId,
+            @RequestBody SaveReviewDto saveReviewDto,
+            HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = jwtUtils.splitBearerToken(bearerToken);
+        String email = (String) jwtUtils.getClaims(token).get("email");
+        return reviewService.patchReview(videoId, reviewId, email, saveReviewDto);
+    }
+
 }

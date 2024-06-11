@@ -82,4 +82,23 @@ public class ReviewService {
     private Video findVideoById(Long videoId) {
         return videoRepository.findById(videoId).orElseThrow(() -> new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND));
     }
+
+    public ResponseEntity<?> patchReview(Long videoId, Long reviewId, String email, SaveReviewDto saveReviewDto) {
+        User user = findUserByEmail(email);
+        Review review = findReviewByIdAndUser(reviewId, user);
+
+        if (review.getVideo().getId().equals(videoId)) {
+            review.updateReview(saveReviewDto);
+            reviewRepository.save(review);
+            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
+        } else {
+            throw new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND);
+        }
+    }
+
+    private Review findReviewByIdAndUser(Long reviewId, User user) {
+        return reviewRepository.findByIdAndUser(reviewId, user)
+                .orElseThrow(() -> new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND));
+    }
+
 }
