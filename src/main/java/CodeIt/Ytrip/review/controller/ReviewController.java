@@ -51,4 +51,14 @@ public class ReviewController {
         return reviewService.patchReview(videoId, reviewId, email, saveReviewDto);
     }
 
+    @DeleteMapping("/video/{video-id}/review/{review-id}")
+    public ResponseEntity<?> deleteReview(@PathVariable("video-id") Long videoId,
+                                          @PathVariable("review-id") Long reviewId,
+                                          HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = jwtUtils.splitBearerToken(bearerToken);
+        String email = (String) jwtUtils.getClaims(token).get("email");
+        return reviewService.deleteReview(videoId, reviewId, email);
+    }
+
 }

@@ -101,4 +101,17 @@ public class ReviewService {
                 .orElseThrow(() -> new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND));
     }
 
+    public ResponseEntity<?> deleteReview(Long videoId, Long reviewId, String email) {
+        User user = findUserByEmail(email);
+        Review review = findReviewByIdAndUser(reviewId, user);
+
+        if (!review.getVideo().getId().equals(videoId)) {
+            throw new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND);
+        }
+
+        reviewRepository.delete(review);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), "리뷰가 성공적으로 삭제되었습니다."));
+    }
+
+
 }
