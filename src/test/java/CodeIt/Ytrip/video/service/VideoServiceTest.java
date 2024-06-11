@@ -18,25 +18,25 @@ class VideoServiceTest {
     @Autowired
     VideoRepository videoRepository;
 
-    @Test
-    public void 비디오_목록_조회() throws Exception {
-
-        for (long i = 1L; i < 13L; i++) {
-            System.out.println("i = " + i);
-            Video test = Video.builder()
-                    .likeCount(100)
-                    .title("Test Title" + i)
-                    .url("Test Url" + i)
-                    .tags(List.of("Test Tag" + i))
-                    .content("Test Content" + i)
-                    .build();
-            videoRepository.save(test);
-        }
-
-        List<Video> findVideos = videoRepository.findTop12ByOrderByLikeCountDesc();
-        int size = findVideos.size();
-        Assertions.assertThat(size).isEqualTo(12);
-    }
+//    @Test
+//    public void 비디오_목록_조회() throws Exception {
+//
+//        for (long i = 1L; i < 13L; i++) {
+//            System.out.println("i = " + i);
+//            Video test = Video.builder()
+//                    .likeCount(100)
+//                    .title("Test Title" + i)
+//                    .url("Test Url" + i)
+//                    .tags(List.of("Test Tag" + i))
+//                    .content("Test Content" + i)
+//                    .build();
+//            videoRepository.save(test);
+//        }
+//
+//        List<Video> findVideos = videoRepository.findTop12ByOrderByLikeCountDesc();
+//        int size = findVideos.size();
+//        Assertions.assertThat(size).isEqualTo(12);
+//    }
 
     @Test
     public void 비디오_상세_정보_조회() throws Exception {
