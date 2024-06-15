@@ -4,12 +4,17 @@ import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.reponse.SuccessResponse;
+import CodeIt.Ytrip.course.domain.CourseDetail;
 import CodeIt.Ytrip.course.domain.UserCourse;
 import CodeIt.Ytrip.course.dto.CourseDto;
+import CodeIt.Ytrip.course.dto.PlanDto;
+import CodeIt.Ytrip.place.dto.PlaceDto;
+import CodeIt.Ytrip.course.repository.CourseDetailRepository;
 import CodeIt.Ytrip.course.repository.UserCourseRepository;
 import CodeIt.Ytrip.place.domain.Place;
 import CodeIt.Ytrip.place.repository.PlaceRepository;
 import CodeIt.Ytrip.user.domain.User;
+import CodeIt.Ytrip.user.dto.UserCourseResponse;
 import CodeIt.Ytrip.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,22 +37,40 @@ public class UserService {
     private final UserCourseRepository userCourseRepository;
 
     public ResponseEntity<?> findUserCourse(Long userId) {
-        Optional<User> findUser = userRepository.findById(userId);
-        findUser.orElseThrow(() -> new UserException(StatusCode.USER_NOT_FOUND));
+        userRepository.findById(userId).orElseThrow(
+                () -> new UserException(StatusCode.USER_NOT_FOUND)
+        );
 
-        List<UserCourse> findUserCourse = userCourseRepository.findByUserId(userId);
+        List<UserCourse> userCourses = userCourseRepository.findByUserId(userId);
+        List<CourseDto> courseDto = userCourses.stream()
+                .map(this::convertToCourseDto)
+                .toList();
 
-        List<List<CourseDto>> response = findUserCourse.stream().map(coursePlaces -> {
-            List<Long> placeIds = Arrays.stream(coursePlaces.getPlaces().split(","))
-                    .map(Long::parseLong)
-                    .toList();
-
-            AtomicInteger index = new AtomicInteger();
-            List<Place> findPlaces = placeRepository.findByIdIn(placeIds);
-            return findPlaces.stream().map(course -> CourseDto.of(index.incrementAndGet(), course))
-                    .toList();
-        }).toList();
-
+        UserCourseResponse response = UserCourseResponse.from(courseDto);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), response));
+    }
+
+    private CourseDto convertToCourseDto(UserCourse userCourse) {
+        List<PlanDto> planDto = userCourse.getCourseDetails().stream()
+                .map(this::convertToPlanDto)
+                .sorted(Comparator.comparingInt(PlanDto::getDay))
+                .toList();
+
+        return CourseDto.of(userCourse.getName(),userCourse.getCreatedAt(), userCourse.getUpdatedAt(), planDto);
+    }
+
+    private PlanDto convertToPlanDto(CourseDetail courseDetail) {
+        List<Long> placeIds = Arrays.stream(courseDetail.getPlaces().split(","))
+                .map(Long::parseLong)
+                .toList();
+
+        AtomicInteger index = new AtomicInteger();
+
+        List<Place> places = placeRepository.findByIdIn(placeIds);
+        List<PlaceDto> placeDto = places.stream()
+                .map(place -> PlaceDto.of(index.incrementAndGet(), place))
+                .toList();
+
+        return PlanDto.of(courseDetail.getDayNum(), placeDto);
     }
 }
