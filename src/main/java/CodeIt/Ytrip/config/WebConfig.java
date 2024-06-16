@@ -15,14 +15,14 @@ public class WebConfig implements WebMvcConfigurer {
      * 개발 단계에서는 주석 처리
      * 추후 배포 단계에서 주석 해제 필요
      */
-//    private final JwtInterceptor jwtInterceptor;
-//
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(jwtInterceptor)
-//                .addPathPatterns("/**")
-//                .excludePathPatterns("/api/auth/**","/test/**");
-//    }
+    private final JwtInterceptor jwtInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/api/auth/**","/test/**");
+    }
 
     /**
      * CORS 설정
