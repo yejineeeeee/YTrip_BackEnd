@@ -17,12 +17,12 @@ public class WebConfig implements WebMvcConfigurer {
      */
     private final JwtInterceptor jwtInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**","/test/**");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(jwtInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/api/auth/**","/test/**");
+//    }
 
     /**
      * CORS 설정
