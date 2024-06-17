@@ -82,10 +82,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getUserLikeVideo(Long userId) {
-        List<Long> videoLikes = videoLikeRepository.findByUserId(userId).stream().map(VideoLike::getId).toList();
+        List<Long> videoLikes = videoLikeRepository.findByUserId(userId).stream().map(videoLike -> videoLike.getVideo().getId()).toList();
         List<Video> findVideos = videoRepository.findByIdIn(videoLikes);
         List<VideoListDto> videoList = findVideos.stream().map(VideoListDto::from).toList();
-        System.out.println("videoList = " + videoList);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videoList));
     }
 
