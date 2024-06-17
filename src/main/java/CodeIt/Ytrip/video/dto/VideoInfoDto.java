@@ -15,7 +15,8 @@ public class VideoInfoDto {
     private Long id;
     private String title;
     private String content;
-    private String url;
+    private String videoUrl;
+    private String imageUrl;
     private List<String> tags;
     private int likeCount;
     private LocalDateTime createdAt;
@@ -26,7 +27,8 @@ public class VideoInfoDto {
                 .id(video.getId())
                 .title(video.getTitle())
                 .content(video.getContent())
-                .url(video.getUrl())
+                .videoUrl(video.getVideoUrl())
+                .imageUrl(video.getImageUrl())
                 .tags(video.getTags())
                 .likeCount(video.getLikeCount())
                 .createdAt(video.getCreatedAt())
