@@ -22,6 +22,7 @@ public class Place {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String img;
-    private float posX;
-    private float posY;
+
+    private double px;
+    private double py;
 }
