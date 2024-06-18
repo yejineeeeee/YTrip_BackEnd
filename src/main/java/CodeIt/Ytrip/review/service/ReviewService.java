@@ -83,34 +83,36 @@ public class ReviewService {
         return videoRepository.findById(videoId).orElseThrow(() -> new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND));
     }
 
+    private Review findReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND));
+    }
     public ResponseEntity<?> patchReview(Long videoId, Long reviewId, String email, SaveReviewDto saveReviewDto) {
         User user = findUserByEmail(email);
-        Review review = findReviewByIdAndUser(reviewId, user);
+        Video video = findVideoById(videoId);
+        Review review = findReviewById(reviewId);
 
-        if (review.getVideo().getId().equals(videoId)) {
-            review.updateReview(saveReviewDto);
-            reviewRepository.save(review);
-            return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
-        } else {
+        if (!review.getVideo().getId().equals(videoId)) {
             throw new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND);
         }
-    }
 
-    private Review findReviewByIdAndUser(Long reviewId, User user) {
-        return reviewRepository.findByIdAndUser(reviewId, user)
-                .orElseThrow(() -> new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND));
+        review.update(saveReviewDto);
+        reviewRepository.save(review);
+
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 
     public ResponseEntity<?> deleteReview(Long videoId, Long reviewId, String email) {
         User user = findUserByEmail(email);
-        Review review = findReviewByIdAndUser(reviewId, user);
+        Video video = findVideoById(videoId);
+        Review review = findReviewById(reviewId);
 
         if (!review.getVideo().getId().equals(videoId)) {
             throw new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND);
         }
 
         reviewRepository.delete(review);
-        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), "리뷰가 성공적으로 삭제되었습니다."));
+
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 
 }
