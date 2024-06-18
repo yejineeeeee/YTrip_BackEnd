@@ -1,6 +1,6 @@
 package CodeIt.Ytrip.course.dto;
 
-import CodeIt.Ytrip.place.domain.Place;
+import CodeIt.Ytrip.place.dto.PlaceDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,11 +9,11 @@ import java.util.List;
 @Data
 @Builder
 public class CourseResponse {
-    private List<CourseDto> course;
+    private List<PlaceDto> course;
 
-    public static CourseResponse from(List<CourseDto> courseDto) {
+    public static CourseResponse from(List<PlaceDto> placeDto) {
         return CourseResponse.builder()
-                .course(courseDto)
+                .course(placeDto)
                 .build();
     }
 }

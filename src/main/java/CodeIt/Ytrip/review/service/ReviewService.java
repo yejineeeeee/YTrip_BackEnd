@@ -113,5 +113,4 @@ public class ReviewService {
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), "리뷰가 성공적으로 삭제되었습니다."));
     }
 
-
 }
