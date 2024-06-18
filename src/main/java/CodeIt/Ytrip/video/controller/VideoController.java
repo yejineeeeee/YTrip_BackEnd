@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class VideoController {
 
     private final VideoService videoService;
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @GetMapping
     public ResponseEntity<?> getVideoList(

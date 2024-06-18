@@ -30,7 +30,7 @@ class VideoCourseTest {
         //given
 
         Video video = Video.builder()
-                .url("testURL")
+                .videoUrl("testURL")
                 .tags(Arrays.asList("testTag"))
                 .title("testTitle")
                 .content("testContent")

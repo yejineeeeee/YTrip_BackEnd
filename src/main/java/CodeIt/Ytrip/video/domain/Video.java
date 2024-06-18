@@ -22,8 +22,18 @@ public class Video extends BaseEntity {
     private Long id;
 
     private String title;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
-    private String url;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String videoUrl;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
 
     @Column(name = "likes_count")
     private int likeCount;
@@ -52,7 +62,7 @@ public class Video extends BaseEntity {
         return Video.builder()
                 .title(title)
                 .content(content)
-                .url(url)
+                .videoUrl(url)
                 .likeCount(likeCount)
                 .tags(tags)
                 .build();

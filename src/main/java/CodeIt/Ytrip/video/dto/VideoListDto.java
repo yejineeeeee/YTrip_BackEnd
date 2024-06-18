@@ -14,14 +14,16 @@ public class VideoListDto {
 
     private Long id;
     private String title;
-    private String url;
+    private String videoUrl;
+    private String imageUrl;
     private List<String> tags;
 
     public static VideoListDto from(Video video) {
         return VideoListDto.builder()
                 .id(video.getId())
                 .title(video.getTitle())
-                .url(video.getUrl())
+                .videoUrl(video.getVideoUrl())
+                .imageUrl(video.getImageUrl())
                 .tags(video.getTags())
                 .build();
     }
