@@ -4,6 +4,7 @@ import CodeIt.Ytrip.video.domain.Video;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
-    List<Video> findTop12ByOrderByLikeCountDesc();
+    @Query("select v from Video v order by v.likeCount DESC")
+    List<Video> findTopByOrderByLikeCountDesc(Pageable pageable);
     Page<Video> findByTagsContaining(String tag, Pageable pageable);
 
     Page<Video> findAllByOrderByLikeCountDesc(Pageable pageable);
@@ -19,4 +21,5 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     Page<Video> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<Video> findByIdIn(List<Long> videoId);
+
 }

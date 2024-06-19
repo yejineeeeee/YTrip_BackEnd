@@ -16,6 +16,7 @@ public class VideoListDto {
     private String title;
     private String videoUrl;
     private String imageUrl;
+    private int likeCount;
     private List<String> tags;
 
     public static VideoListDto from(Video video) {
@@ -25,6 +26,7 @@ public class VideoListDto {
                 .videoUrl(video.getVideoUrl())
                 .imageUrl(video.getImageUrl())
                 .tags(video.getTags())
+                .likeCount(video.getLikeCount())
                 .build();
     }
 }

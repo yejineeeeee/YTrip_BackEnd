@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -92,5 +93,12 @@ public class VideoService {
 
     private Video findVideoById(Long videoId) {
         return videoRepository.findById(videoId).orElseThrow(() -> new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND));
+    }
+
+    public List<VideoListDto> getTopLikedVideo(int limit) {
+        List<Video> topLikedVideos = videoRepository.findTopByOrderByLikeCountDesc(PageRequest.of(0, limit));
+        return topLikedVideos.stream()
+                .map(VideoListDto::from)
+                .toList();
     }
 }
