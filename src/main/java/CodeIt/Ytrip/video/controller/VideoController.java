@@ -3,12 +3,15 @@ package CodeIt.Ytrip.video.controller;
 import CodeIt.Ytrip.common.JwtUtils;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.reponse.SuccessResponse;
+import CodeIt.Ytrip.video.dto.VideoListDto;
 import CodeIt.Ytrip.video.service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -21,13 +24,9 @@ public class VideoController {
     private final JwtUtils jwtUtils;
 
     @GetMapping
-    public ResponseEntity<?> getVideoList(
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) String tag
-
-    ) {
-        return videoService.getVideoList(sort, page, tag);
+    public ResponseEntity<SuccessResponse<List<VideoListDto>>> getVideoList() {
+        List<VideoListDto> videoList = videoService.getAllVideos();
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videoList));
     }
 
     @GetMapping("/{video_id}")
