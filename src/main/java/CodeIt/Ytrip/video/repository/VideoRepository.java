@@ -19,7 +19,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     Page<Video> findAllByOrderByLikeCountDesc(Pageable pageable);
 
     Page<Video> findAllByOrderByCreatedAtDesc(Pageable pageable);
-
+    @Query("select v from Video v")
+    Page<Video> findAll(Pageable pageable);
     List<Video> findByIdIn(List<Long> videoId);
 
 }

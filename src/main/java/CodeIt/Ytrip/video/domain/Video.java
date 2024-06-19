@@ -37,6 +37,7 @@ public class Video extends BaseEntity {
 
     @Column(name = "likes_count")
     private int likeCount;
+
     public void setLikecount(int likeCount) {
         this.likeCount = likeCount;
     }

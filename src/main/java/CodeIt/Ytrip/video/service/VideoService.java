@@ -1,6 +1,6 @@
 package CodeIt.Ytrip.video.service;
 
-import CodeIt.Ytrip.common.dto.BasePageDto;
+import CodeIt.Ytrip.common.exception.BaseException;
 import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
@@ -36,32 +36,31 @@ public class VideoService {
     private final VideoLikeRepository videoLikeRepository;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getVideoList(String sort, int page, String tag) {
-        Pageable pageable = PageRequest.of(page, 20);
-        Page<Video> videos;
-
-        if (tag != null && !tag.isEmpty()) {
-            videos = videoRepository.findByTagsContaining(tag, pageable);
-        } else {
-            if (sort.equals("likeCount")) {
-                videos = videoRepository.findAllByOrderByLikeCountDesc(pageable);
-            } else if (sort.equals("latest")) {
-                videos = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
-            } else {
-                throw new IllegalArgumentException("Invalid sort parameter");
-            }
-        }
+    public List<VideoListDto> getAllVideos() {
+        List<Video> videos = videoRepository.findAll();
 
         if (videos.isEmpty()) {
-            throw new NoSuchElementException(StatusCode.VIDEO_NOT_FOUND);
+            throw new BaseException(StatusCode.VIDEO_NOT_FOUND);
         }
 
-        log.info("Video size = {}", videos.getSize());
-        Page<VideoListDto> videoListDtoPage = videos.map(VideoListDto::from);
-        BasePageDto<VideoListDto> basePageDto = BasePageDto.from(videoListDtoPage);
-
-        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), basePageDto));
+        return videos.stream()
+                .map(VideoListDto::from)
+                .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<Video> getVideosByTag(String tag, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Video> videos = videoRepository.findByTagsContaining(tag, pageable);
+
+        if (videos.isEmpty()) {
+            throw new BaseException(StatusCode.VIDEO_NOT_FOUND);
+        }
+
+        return videos.getContent();
+    }
+
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getVideoDetailInfo(Long videoId) {
