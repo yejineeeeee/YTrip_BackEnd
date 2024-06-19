@@ -11,8 +11,8 @@ public class PlaceDto {
     private String name;
     private String description;
     private String img;
-    private float posX;
-    private float posY;
+    private double posX;
+    private double posY;
 
     public static PlaceDto of(int index, Place place) {
         return PlaceDto.builder()
@@ -20,8 +20,8 @@ public class PlaceDto {
                 .name(place.getName())
                 .description(place.getDescription())
                 .img(place.getImg())
-                .posX(place.getPosX())
-                .posY(place.getPosY())
+                .posX(place.getPx())
+                .posY(place.getPy())
                 .build();
     }
 }

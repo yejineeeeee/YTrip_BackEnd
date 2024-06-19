@@ -1,7 +1,7 @@
 package CodeIt.Ytrip.user.dto;
 
 import CodeIt.Ytrip.course.dto.CourseDto;
-import CodeIt.Ytrip.place.dto.PlaceDto;
+import CodeIt.Ytrip.course.dto.CourseListDto;
 import lombok.Builder;
 import lombok.Data;
 

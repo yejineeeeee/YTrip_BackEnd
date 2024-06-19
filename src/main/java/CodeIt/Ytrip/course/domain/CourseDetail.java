@@ -23,4 +23,10 @@ public class CourseDetail {
 
     private String places;
     private int dayNum;
+
+    public void updateCourseDetail(UserCourse userCourse, String places, int dayNum) {
+        this.userCourse = userCourse;
+        this.places = places;
+        this.dayNum = dayNum;
+    }
 }

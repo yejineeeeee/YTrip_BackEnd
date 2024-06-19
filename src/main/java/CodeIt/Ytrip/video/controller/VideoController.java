@@ -44,4 +44,15 @@ public class VideoController {
         videoService.VideoLike(videoId, email);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
+
+    @GetMapping("/top-liked")
+    public ResponseEntity<?> getVideoLikesFive(@RequestParam(defaultValue = "5") int limit) {
+        return ResponseEntity.ok(
+                SuccessResponse.of(
+                        StatusCode.SUCCESS.getCode(),
+                        StatusCode.SUCCESS.getMessage(),
+                        videoService.getTopLikedVideo(limit)
+                )
+        );
+    }
 }

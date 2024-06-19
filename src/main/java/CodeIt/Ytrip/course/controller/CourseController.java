@@ -1,7 +1,7 @@
 package CodeIt.Ytrip.course.controller;
 
 import CodeIt.Ytrip.common.JwtUtils;
-import CodeIt.Ytrip.course.dto.CourseDto;
+import CodeIt.Ytrip.course.dto.CourseListDto;
 import CodeIt.Ytrip.course.service.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,11 @@ public class CourseController {
     private final JwtUtils jwtUtils;
 
     @PostMapping
-    public ResponseEntity<?> postUserCourse(@RequestBody CourseDto courseDto, HttpServletRequest request) {
+    public ResponseEntity<?> postUserCourse(@RequestBody CourseListDto courseListDto, HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         String token = jwtUtils.splitBearerToken(bearerToken);
         String email = (String) jwtUtils.getClaims(token).get("email");
-        return courseService.postUserCourse(courseDto, email);
+        return courseService.postUserCourse(courseListDto, email);
     }
     @GetMapping("/{video_id}")
     public ResponseEntity<?> getVideoCourse(@PathVariable("video_id") Long videoId) {

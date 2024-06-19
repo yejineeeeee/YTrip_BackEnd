@@ -1,6 +1,7 @@
 package CodeIt.Ytrip.course.domain;
 
 import CodeIt.Ytrip.common.domain.BaseEntity;
+import CodeIt.Ytrip.course.dto.CourseListDto;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.video.domain.Video;
 import jakarta.persistence.*;
@@ -29,4 +30,9 @@ public class UserCourse extends BaseEntity {
     private List<CourseDetail> courseDetails = new ArrayList<>();
 
     private String name;
+
+    public void updateUserCourse(User user, CourseListDto userCourse) {
+        this.user = user;
+        this.name = userCourse.getName();
+    }
 }

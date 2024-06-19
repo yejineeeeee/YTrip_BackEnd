@@ -11,7 +11,7 @@ import CodeIt.Ytrip.course.domain.VideoCourse;
 import CodeIt.Ytrip.place.dto.PlaceDto;
 import CodeIt.Ytrip.course.dto.CourseResponse;
 import CodeIt.Ytrip.course.dto.PlanDto;
-import CodeIt.Ytrip.course.dto.CourseDto;
+import CodeIt.Ytrip.course.dto.CourseListDto;
 import CodeIt.Ytrip.course.repository.CourseDetailRepository;
 import CodeIt.Ytrip.course.repository.UserCourseRepository;
 import CodeIt.Ytrip.course.repository.VideoCourseRepository;
@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class CourseService {
 
@@ -40,14 +42,14 @@ public class CourseService {
     private final PlaceRepository placeRepository;
     private final CourseDetailRepository courseDetailRepository;
 
-    public ResponseEntity<?> postUserCourse(CourseDto courseDto, String email) {
+    public ResponseEntity<?> postUserCourse(CourseListDto courseListDto, String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
         User user = findUser.orElseThrow(() -> new UserException(StatusCode.USER_NOT_FOUND));
 
-        String courseName = courseDto.getName();
+        String courseName = courseListDto.getName();
         UserCourse userCourse = saveUserCourse(user, courseName);
 
-        List<PlanDto> courses = courseDto.getPlan();
+        List<PlanDto> courses = courseListDto.getPlan();
         courses.forEach(course -> {
             int day = course.getDay();
             List<PlaceDto> places = course.getPlace();
@@ -68,14 +70,14 @@ public class CourseService {
     }
 
     private String getPlaceId(PlaceDto course) {
-        float posX = course.getPosX();
-        float posY = course.getPosY();
-        Optional<Place> findPlace = placeRepository.findByPosXAndPosY(posX, posY);
+        double posX = course.getPosX();
+        double posY = course.getPosY();
+        Optional<Place> findPlace = placeRepository.findByPxAndPy(posX, posY);
         if (findPlace.isEmpty()) {
             Place place = Place.builder()
                     .name(course.getName())
-                    .posX(posX)
-                    .posY(posY)
+                    .px(posX)
+                    .py(posY)
                     .img(course.getImg())
                     .description(course.getDescription())
                     .build();
