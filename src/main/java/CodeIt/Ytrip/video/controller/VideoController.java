@@ -29,6 +29,12 @@ public class VideoController {
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videoList));
     }
 
+    @GetMapping("/tag/{tag}")
+    public ResponseEntity<?> getVideosByTag(@PathVariable String tag, @RequestParam int page, @RequestParam int size) {
+        List<VideoListDto> videos = videoService.getVideosByTag(tag, page, size);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videos));
+    }
+
     @GetMapping("/{video_id}")
     public ResponseEntity<?> getVideoDetailInfo(@PathVariable("video_id") Long videoId) {
         return videoService.getVideoDetailInfo(videoId);

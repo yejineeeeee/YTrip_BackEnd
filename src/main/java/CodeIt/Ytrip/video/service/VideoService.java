@@ -49,7 +49,7 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Video> getVideosByTag(String tag, int page, int size) {
+    public List<VideoListDto> getVideosByTag(String tag, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Video> videos = videoRepository.findByTagsContaining(tag, pageable);
 
@@ -57,10 +57,10 @@ public class VideoService {
             throw new BaseException(StatusCode.VIDEO_NOT_FOUND);
         }
 
-        return videos.getContent();
+        return videos.stream()
+                .map(VideoListDto::from)
+                .toList();
     }
-
-
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getVideoDetailInfo(Long videoId) {
