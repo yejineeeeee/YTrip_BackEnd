@@ -29,8 +29,8 @@ public class ReviewController {
         return reviewService.getReviewList(videoId, sort, page);
     }
 
-    @PostMapping("/video/{video-id}/review")
-    public ResponseEntity<?> saveReview(@PathVariable("video-id") Long videoId,
+    @PostMapping("/video/{video_id}/review")
+    public ResponseEntity<?> saveReview(@PathVariable("video_id") Long videoId,
                                         @RequestBody SaveReviewDto saveReviewDto,
                                         HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -39,10 +39,10 @@ public class ReviewController {
         return reviewService.saveReview(videoId, email, saveReviewDto);
     }
 
-    @PatchMapping("/video/{video-id}/review/{review-id}")
+    @PatchMapping("/video/{video_id}/review/{review_id}")
     public ResponseEntity<?> patchReview(
-            @PathVariable("video-id") Long videoId,
-            @PathVariable("review-id") Long reviewId,
+            @PathVariable("video_id") Long videoId,
+            @PathVariable("review_id") Long reviewId,
             @RequestBody SaveReviewDto saveReviewDto,
             HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

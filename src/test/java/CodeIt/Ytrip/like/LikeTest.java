@@ -25,7 +25,7 @@ public class LikeTest {
                 .email("email")
                 .nickname("nickname")
                 .build();
-        
+
         em.persist(user);
 
         Review review = Review.builder()

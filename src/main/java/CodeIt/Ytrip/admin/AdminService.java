@@ -4,12 +4,15 @@ import CodeIt.Ytrip.common.exception.NoSuchElementException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.course.domain.VideoCourse;
 import CodeIt.Ytrip.course.repository.VideoCourseRepository;
+import CodeIt.Ytrip.like.repository.VideoLikeRepository;
 import CodeIt.Ytrip.place.domain.Place;
 import CodeIt.Ytrip.place.repository.PlaceRepository;
+import CodeIt.Ytrip.review.repository.ReviewRepository;
 import CodeIt.Ytrip.video.domain.Video;
 import CodeIt.Ytrip.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +25,10 @@ import java.util.stream.Collectors;
 @Service
 public class AdminService {
 
+    private final ReviewRepository reviewRepository;
     private final VideoRepository videoRepository;
     private final PlaceRepository placeRepository;
+    private final VideoLikeRepository videoLikeRepository;
     private final VideoCourseRepository videoCourseRepository;
 
     public void saveVideoAndVideoCourse(SaveVideoRequest saveVideoRequest) {
@@ -59,5 +64,11 @@ public class AdminService {
                 .places(placeIds).build();
 
         videoCourseRepository.save(videoCourse);
+    }
+
+    public void deleteVideo(Long videoId) {
+        reviewRepository.deleteByVideoId(videoId);
+        videoCourseRepository.deleteByVideoId(videoId);
+        videoLikeRepository.deleteByVideoId(videoId);
     }
 }

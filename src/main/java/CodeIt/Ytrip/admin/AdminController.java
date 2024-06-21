@@ -24,4 +24,10 @@ public class AdminController {
         adminService.saveVideoAndVideoCourse(saveVideoRequest);
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
+
+    @DeleteMapping("/admin/video/{video_id}")
+    public ResponseEntity<?> deleteVideo(@PathVariable("video_id") Long videoId) {
+        adminService.deleteVideo(videoId);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
+    }
 }

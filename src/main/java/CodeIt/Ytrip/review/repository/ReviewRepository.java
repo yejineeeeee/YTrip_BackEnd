@@ -17,4 +17,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Optional<Review> findByIdAndUser(Long reviewId, User user);
 
+    void deleteByVideoId(Long videoId);
+
 }
