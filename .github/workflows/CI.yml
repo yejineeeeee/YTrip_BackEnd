@@ -26,25 +26,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      - name: make application.yml
-        run: |
-          cd ./src/main/resources
+      # - name: make application.yml
+      #   run: |
+      #     cd ./src/main/resources
           
-          touch ./application.yml
+      #     touch ./application.yml
           
-          echo "${{ secrets.APPLICATION }}" >> ./application.yml
+      #     echo "${{ secrets.APPLICATION }}" >> ./application.yml
 
-        shell: bash
+      #   shell: bash
         
-      - name: make test application.yml
-        run: |
-          cd ./src/test/resources
+      # - name: make test application.yml
+      #   run: |
+      #     cd ./src/test/resources
           
-          touch ./application.yml
+      #     touch ./application.yml
           
-          echo "${{ secrets.APPLICATION }}" >> ./application.yml
+      #     echo "${{ secrets.APPLICATION }}" >> ./application.yml
 
-        shell: bash
+      #   shell: bash
 
       - name: make application-database.yml
         run: |
