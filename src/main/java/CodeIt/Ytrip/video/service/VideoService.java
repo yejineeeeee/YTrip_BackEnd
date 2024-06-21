@@ -22,8 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,6 +62,19 @@ public class VideoService {
         return videos.stream()
                 .map(VideoListDto::from)
                 .toList();
+    }
+
+    @Transactional
+    public void addTagsToVideo(Long videoId, String tags) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new BaseException(StatusCode.VIDEO_NOT_FOUND));
+
+        List<String> tagList = Arrays.stream(tags.split(";"))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        video.getTags().addAll(tagList);
+        videoRepository.save(video);
     }
 
     @Transactional(readOnly = true)
