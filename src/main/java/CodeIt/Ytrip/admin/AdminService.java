@@ -70,5 +70,6 @@ public class AdminService {
         reviewRepository.deleteByVideoId(videoId);
         videoCourseRepository.deleteByVideoId(videoId);
         videoLikeRepository.deleteByVideoId(videoId);
+        videoRepository.deleteById(videoId);
     }
 }
