@@ -49,13 +49,14 @@ public class UserService {
     private final CourseDetailRepository courseDetailRepository;
     private final VideoLikeRepository videoLikeRepository;
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public ResponseEntity<?> findUserCourse(Long userId) {
         userRepository.findById(userId).orElseThrow(
                 () -> new UserException(StatusCode.USER_NOT_FOUND)
         );
 
         List<UserCourse> userCourses = userCourseRepository.findByUserId(userId);
+        System.out.println("userCourses = " + userCourses);
         List<CourseDto> courseDto = userCourses.stream()
                 .map(this::convertToCourseDto)
                 .toList();
@@ -66,7 +67,10 @@ public class UserService {
 
     private CourseDto convertToCourseDto(UserCourse userCourse) {
         List<PlanDto> planDto = userCourse.getCourseDetails().stream()
-                .map(this::convertToPlanDto)
+                .map(courseDetail -> {
+                    System.out.println("courseDetail.getPlaces() = " + courseDetail.getPlaces());
+                    return convertToPlanDto(courseDetail);
+                })
                 .sorted(Comparator.comparingInt(PlanDto::getDay))
                 .toList();
 
@@ -79,11 +83,10 @@ public class UserService {
                 .toList();
 
         AtomicInteger index = new AtomicInteger();
-
-        List<Place> places = placeRepository.findByIdIn(placeIds);
-        List<PlaceDto> placeDto = places.stream()
-                .map(place -> PlaceDto.of(index.incrementAndGet(), place))
-                .toList();
+        List<PlaceDto> placeDto = placeIds.stream().map(placeId -> {
+            Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(StatusCode.PLACE_NOT_FOUND));
+            return PlaceDto.of(index.incrementAndGet(), place);
+        }).toList();
 
         return PlanDto.of(courseDetail.getDayNum(), placeDto);
     }
@@ -148,10 +151,9 @@ public class UserService {
         });
 
         log.info("After Course Detail Update Query");
-        System.out.println("============================");
         userCourse.updateUserCourse(user, courseListDto);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 }
 

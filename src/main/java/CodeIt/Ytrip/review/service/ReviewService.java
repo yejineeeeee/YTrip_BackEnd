@@ -25,6 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 @Transactional
@@ -59,7 +62,10 @@ public class ReviewService {
             throw new NoSuchElementException(StatusCode.REVIEW_NOT_FOUND);
         }
 
-        Page<ReviewDto> reviewDtoPage = reviews.map(ReviewDto::from);
+       Page<ReviewDto> reviewDtoPage = reviews.map(review -> {
+           String nickname = userRepository.findById(review.getUser().getId()).orElseThrow(() -> new UserException(StatusCode.USER_NOT_FOUND)).getNickname();
+           return ReviewDto.from(review, nickname);
+       });
         BasePageDto<ReviewDto> basePageDto = BasePageDto.from(reviewDtoPage);
 
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), ReviewPageResponse.of(reviewDtoPage.getContent(), basePageDto)));
