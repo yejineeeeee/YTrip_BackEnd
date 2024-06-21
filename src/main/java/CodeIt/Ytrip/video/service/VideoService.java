@@ -6,6 +6,7 @@ import CodeIt.Ytrip.common.exception.UserException;
 import CodeIt.Ytrip.common.reponse.StatusCode;
 import CodeIt.Ytrip.common.reponse.SuccessResponse;
 import CodeIt.Ytrip.like.domain.VideoLike;
+import CodeIt.Ytrip.review.domain.Review;
 import CodeIt.Ytrip.user.domain.User;
 import CodeIt.Ytrip.user.repository.UserRepository;
 import CodeIt.Ytrip.video.domain.Video;
@@ -36,6 +37,7 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
     private final VideoLikeRepository videoLikeRepository;
+    private Review jdbcTemplate;
 
     @Transactional(readOnly = true)
     public List<VideoListDto> getAllVideos() {
@@ -64,16 +66,16 @@ public class VideoService {
                 .toList();
     }
 
-    @Transactional
     public void addTagsToVideo(Long videoId, String tags) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new BaseException(StatusCode.VIDEO_NOT_FOUND));
 
-        List<String> tagList = Arrays.stream(tags.split(";"))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        String[] tagArray = tags.split(",");
+        List<String> tagList = Arrays.asList(tagArray);
 
+        video.getTags().clear();
         video.getTags().addAll(tagList);
+
         videoRepository.save(video);
     }
 
