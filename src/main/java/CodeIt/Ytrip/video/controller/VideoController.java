@@ -35,6 +35,12 @@ public class VideoController {
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), videos));
     }
 
+    @PostMapping("/{video_id}/tags")
+    public ResponseEntity<?> addTagsToVideo(@PathVariable Long videoId, @RequestParam String tags) {
+        videoService.addTagsToVideo(videoId, tags);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage(), null));
+    }
+
     @GetMapping("/{video_id}")
     public ResponseEntity<?> getVideoDetailInfo(@PathVariable("video_id") Long videoId) {
         return videoService.getVideoDetailInfo(videoId);
