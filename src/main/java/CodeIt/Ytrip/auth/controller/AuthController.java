@@ -1,9 +1,15 @@
 package CodeIt.Ytrip.auth.controller;
 
+import CodeIt.Ytrip.auth.dto.request.ChangePasswordRequest;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.auth.service.AuthService;
 import CodeIt.Ytrip.auth.service.SocialService;
+import CodeIt.Ytrip.common.JwtUtils;
+import CodeIt.Ytrip.common.exception.UserException;
+import CodeIt.Ytrip.common.reponse.StatusCode;
+import CodeIt.Ytrip.common.reponse.SuccessResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +25,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final SocialService socialService;
+    private final JwtUtils jwtUtils;
     @PostMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> request) {
         String code = request.get("code");
@@ -51,5 +58,20 @@ public class AuthController {
     public ResponseEntity<?> naverLogin(@RequestBody Map<String, String> request) {
         String code = request.get("code");
         return socialService.naverLogin(code);
+    }
+
+    @PostMapping("/find-passowrd")
+    public ResponseEntity<?> findPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (!authService.isUserEmail(email)) {
+            throw new UserException(StatusCode.USER_NOT_FOUND);
+        }
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        authService.changePassword(changePasswordRequest);
+        return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 }

@@ -2,6 +2,7 @@ package CodeIt.Ytrip.auth.service;
 
 import CodeIt.Ytrip.auth.dto.LoginResponse;
 import CodeIt.Ytrip.auth.dto.TokenDto;
+import CodeIt.Ytrip.auth.dto.request.ChangePasswordRequest;
 import CodeIt.Ytrip.auth.dto.request.LocalLoginRequest;
 import CodeIt.Ytrip.auth.dto.request.RegisterRequest;
 import CodeIt.Ytrip.common.reponse.StatusCode;
@@ -43,6 +44,7 @@ public class AuthService {
         return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<?> checkEmailDuplicate(String email) {
         if (!userRepository.existsByEmail(email)) {
             return ResponseEntity.ok(SuccessResponse.of(StatusCode.SUCCESS.getCode(), StatusCode.SUCCESS.getMessage()));
@@ -79,5 +81,24 @@ public class AuthService {
             }
         }
         throw new UserException(StatusCode.LOGIN_REQUIRED);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isUserEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+        String email = changePasswordRequest.getEmail();
+        String newPassword = changePasswordRequest.getNewPassword();
+        String checkPassword = changePasswordRequest.getCheckPassword();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserException(StatusCode.USER_NOT_FOUND));
+
+        if (newPassword.equals(checkPassword)) {
+            user.changePassword(newPassword);
+        } else {
+            throw new UserException(StatusCode.PASSWORD_NOT_MATCH);
+        }
     }
 }

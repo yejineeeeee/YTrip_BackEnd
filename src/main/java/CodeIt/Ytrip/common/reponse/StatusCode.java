@@ -18,6 +18,7 @@ public enum StatusCode {
     REVIEW_NOT_FOUND(false,"4007", "리뷰를 찾을 수 없습니다."),
     PLACE_NOT_FOUND(false,"4008", "해당 장소를 찾을 수 없습니다."),
     USER_COURSE_NOT_FOUND(false,"4009", "저장된 유저 코스를 찾을 수 없습니다."),
+    PASSWORD_NOT_MATCH(false, "4010", "패스워드가 일치하지 않습니다."),
     INTERNAL_SERVER_ERROR(false,"5000", "일시적인 오류입니다. 잠시후 다시 시도해 주세요."),
     ALREADY_LIKED(false, "6000", "이미 좋아요가 되어있습니다."),
     UNAUTHORIZED(false, "7000", "권한이 없습니다.");
